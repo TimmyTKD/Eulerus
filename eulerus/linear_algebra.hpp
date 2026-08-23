@@ -22,6 +22,7 @@ namespace eulerus::linear_algebra {
     * @tparam T Data type of the matrix's values
     */
     template <std::size_t rows, std::size_t columns, typename T = double>
+    requires (rows > 0 && columns > 0)
     class Matrix {
         public:
             using MatrixDataType = T;
@@ -97,6 +98,35 @@ namespace eulerus::linear_algebra {
                 return matrix;
             }
 
+            // Return the determinant of a square matrix
+            const T determinant() requires (rows == columns) {
+                if constexpr (rows == 1) {
+                    return values[0][0];
+                }
+                else if constexpr (rows == 2) {
+                    return values[0][0] * values[1][1] - values[0][1] * values[1][0];
+                }
+                else { // size > 2: use Laplace expansion along the first row
+                    T result = T();
+                    for (std::size_t i = 0; i < columns; i++) {
+                        T cofactor = ((i % 2 == 0) ? 1 : -1) * values[0][i];
+                        Matrix<rows - 1, columns - 1, T> submatrix;
+
+                        for (std::size_t j = 1; j < rows; j++) {
+                            std::size_t subColumn = 0;
+                            for (std::size_t k = 0; k < columns; k++) {
+                                if (k == i) continue;
+                                submatrix[j - 1][subColumn] = values[j][k];
+                                subColumn++;
+                            }
+                        }
+                        
+                        result += cofactor * submatrix.determinant();
+                    }
+                    return result;
+                }
+            }
+
             // Return the matrix's row count
             static constexpr std::size_t size() { return rows; }
             
@@ -122,7 +152,6 @@ namespace eulerus::linear_algebra {
             std::array<std::array<T, columns>, rows> values{};
     };
 
-    // TODO: determinant
     // TODO: inverses and matrix "division"
 
     /**
@@ -290,6 +319,7 @@ namespace eulerus::linear_algebra {
     * @tparam T Data type of the vector's values
     */
     template <std::size_t dimension, typename T = double>
+    requires (dimension > 0)
     class Vector : public Matrix<dimension, 1, T> {
         public:
             // Construct a vector with a default initialization of its values
@@ -314,7 +344,7 @@ namespace eulerus::linear_algebra {
             }
     };
 
-    // Return the scalar/dot product between vectors `left` and `right `
+    // Return the scalar/dot product between vectors `left` and `right`
     template <std::size_t dimension, typename T, typename T2>
     requires requires(T a, T2 b) {a * b;} 
     auto operator*(const Vector<dimension, T>& left, const Vector<dimension, T2>& right) {
