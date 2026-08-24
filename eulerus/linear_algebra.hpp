@@ -98,6 +98,27 @@ namespace eulerus::linear_algebra {
                 return matrix;
             }
 
+            // Return the matrix in row echelon form
+            Matrix row_echelon_form() const {
+                Matrix<Rows, Columns, T> matrix = *this;
+
+                for (std::size_t i = 0; i < Rows; i++) {
+                    if (matrix[i][i] == T()) continue;
+                    T pivot = matrix[i][i];
+
+                    for (std::size_t j = i + 1; j < Rows; j++) {
+                        if (matrix[j][i] == T()) continue;
+                        auto factor = matrix[j][i] / pivot;
+
+                        for (std::size_t k = i; k < Columns; k++) {
+                            matrix[j][k] -= factor * matrix[i][k];
+                        }
+                    }
+                }
+                
+                return matrix;
+            }
+
             // Return the determinant of a square matrix
             const T determinant() requires (Rows == Columns) {
                 if constexpr (Rows == 1) {
@@ -106,23 +127,14 @@ namespace eulerus::linear_algebra {
                 else if constexpr (Rows == 2) {
                     return values[0][0] * values[1][1] - values[0][1] * values[1][0];
                 }
-                else { // size > 2: use Laplace expansion along the first row
-                    T result = T();
-                    for (std::size_t i = 0; i < Columns; i++) {
-                        T cofactor = ((i % 2 == 0) ? 1 : -1) * values[0][i];
-                        Matrix<Rows - 1, Columns - 1, T> submatrix;
+                else { // size > 2: calculate the determinant from the matrix's row echelon form
+                    Matrix<Rows, Columns, T> ref_matrix = row_echelon_form();
+                    T result = ref_matrix[0][0];
 
-                        for (std::size_t j = 1; j < Rows; j++) {
-                            std::size_t sub_column = 0;
-                            for (std::size_t k = 0; k < Columns; k++) {
-                                if (k == i) continue;
-                                submatrix[j - 1][sub_column] = values[j][k];
-                                sub_column++;
-                            }
-                        }
-                        
-                        result += cofactor * submatrix.determinant();
+                    for (std::size_t i = 1; i < Rows; i++) {
+                        result *= ref_matrix[i][i];
                     }
+                    
                     return result;
                 }
             }
