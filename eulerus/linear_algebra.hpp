@@ -15,29 +15,29 @@ namespace eulerus::linear_algebra {
     /* -------------------------------------------------------------------------- */
 
     /**
-    * @brief Matrix class supporting different dimensions and data types
-    * 
-    * @tparam rows Number of rows in the matrix
-    * @tparam columns Number of columns in the matrix
-    * @tparam T Data type of the matrix's values
-    */
-    template <std::size_t rows, std::size_t columns, typename T = double>
-    requires (rows > 0 && columns > 0)
+     * @brief Matrix class supporting different dimensions and data types
+     * 
+     * @tparam Rows Number of rows in the matrix
+     * @tparam Columns Number of columns in the matrix
+     * @tparam T Data type of the matrix's values
+     */
+    template <std::size_t Rows, std::size_t Columns, typename T = double>
+    requires (Rows > 0 && Columns > 0)
     class Matrix {
         public:
             using MatrixDataType = T;
-            static constexpr std::array<std::size_t, 2> shape = {rows, columns};
+            static constexpr std::array<std::size_t, 2> shape = {Rows, Columns};
 
             // Construct a matrix with a default initialization of its values
             Matrix() = default;
 
             // Construct a matrix from a 2D array of values
             Matrix(std::initializer_list<std::initializer_list<T>> args) {
-                assert(args.size() == rows);
+                assert(args.size() == Rows);
 
                 auto row = args.begin();
-                for (std::size_t i = 0; i < rows; i++) {
-                    assert(row->size() == columns);
+                for (std::size_t i = 0; i < Rows; i++) {
+                    assert(row->size() == Columns);
                     std::copy(row->begin(), row->end(), values[i].begin());
                     row++;
                 }
@@ -45,23 +45,23 @@ namespace eulerus::linear_algebra {
 
             // Construct a matrix from any 2D collection
             template <typename Collection>
-            requires requires(Collection a) {{a[0][0]} -> std::convertible_to<T>; requires (std::size(a) == rows);}
+            requires requires(Collection a) {{a[0][0]} -> std::convertible_to<T>; requires (std::size(a) == Rows);}
             Matrix(const Collection& args) {
-                for (std::size_t i = 0; i < rows; i++) {
-                    assert(std::size(args[i]) == columns);
+                for (std::size_t i = 0; i < Rows; i++) {
+                    assert(std::size(args[i]) == Columns);
 
-                    for (std::size_t j = 0; j < columns; j++) {
+                    for (std::size_t j = 0; j < Columns; j++) {
                         values[i][j] = args[i][j];
                     }
                 }
             }
 
             // Construct an N x 1 matrix (vector) from an array of values
-            Matrix(std::initializer_list<T> args) requires(columns == 1) {
-                assert(args.size() == rows);
+            Matrix(std::initializer_list<T> args) requires(Columns == 1) {
+                assert(args.size() == Rows);
 
                 auto row = args.begin();
-                for (std::size_t i = 0; i < rows; i++) {
+                for (std::size_t i = 0; i < Rows; i++) {
                     values[i][0] = *row;
                     row++;
                 }
@@ -71,11 +71,11 @@ namespace eulerus::linear_algebra {
             friend std::ostream& operator<<(std::ostream& os, const Matrix& matrix) {
                 os << std::endl;
                 
-                for (std::size_t i = 0; i < rows; i++) {
+                for (std::size_t i = 0; i < Rows; i++) {
                     os << '[';
-                    for (std::size_t j = 0; j < columns; j++) {
+                    for (std::size_t j = 0; j < Columns; j++) {
                         os << matrix.values[i][j];
-                        if (j + 1 < columns) os << ", ";
+                        if (j + 1 < Columns) os << ", ";
                     }
                     os << ']' << std::endl;
                 }
@@ -86,11 +86,11 @@ namespace eulerus::linear_algebra {
             // Cast the matrix's values to a compatible type
             template <typename T2>
             requires (std::is_convertible_v<T, T2>)
-            Matrix<rows, columns, T2> cast() const {
-                Matrix<rows, columns, T2> matrix;
+            Matrix<Rows, Columns, T2> cast() const {
+                Matrix<Rows, Columns, T2> matrix;
 
-                for (std::size_t i = 0; i < rows; i++) {
-                    for (std::size_t j = 0; j < columns; j++) {
+                for (std::size_t i = 0; i < Rows; i++) {
+                    for (std::size_t j = 0; j < Columns; j++) {
                         matrix[i][j] = static_cast<T2>((*this)[i][j]);
                     }
                 }
@@ -99,25 +99,25 @@ namespace eulerus::linear_algebra {
             }
 
             // Return the determinant of a square matrix
-            const T determinant() requires (rows == columns) {
-                if constexpr (rows == 1) {
+            const T determinant() requires (Rows == Columns) {
+                if constexpr (Rows == 1) {
                     return values[0][0];
                 }
-                else if constexpr (rows == 2) {
+                else if constexpr (Rows == 2) {
                     return values[0][0] * values[1][1] - values[0][1] * values[1][0];
                 }
                 else { // size > 2: use Laplace expansion along the first row
                     T result = T();
-                    for (std::size_t i = 0; i < columns; i++) {
+                    for (std::size_t i = 0; i < Columns; i++) {
                         T cofactor = ((i % 2 == 0) ? 1 : -1) * values[0][i];
-                        Matrix<rows - 1, columns - 1, T> submatrix;
+                        Matrix<Rows - 1, Columns - 1, T> submatrix;
 
-                        for (std::size_t j = 1; j < rows; j++) {
-                            std::size_t subColumn = 0;
-                            for (std::size_t k = 0; k < columns; k++) {
+                        for (std::size_t j = 1; j < Rows; j++) {
+                            std::size_t sub_column = 0;
+                            for (std::size_t k = 0; k < Columns; k++) {
                                 if (k == i) continue;
-                                submatrix[j - 1][subColumn] = values[j][k];
-                                subColumn++;
+                                submatrix[j - 1][sub_column] = values[j][k];
+                                sub_column++;
                             }
                         }
                         
@@ -128,7 +128,7 @@ namespace eulerus::linear_algebra {
             }
 
             // Return the matrix's row count
-            static constexpr std::size_t size() { return rows; }
+            static constexpr std::size_t size() { return Rows; }
             
             // Return a mutable reference to the row at `index`
             auto& operator[](std::size_t index) { return values[index]; }
@@ -137,19 +137,19 @@ namespace eulerus::linear_algebra {
             const auto& operator[](std::size_t index) const { return values[index]; }
 
             // Return a mutable reference to the value at row `i` and column `j`
-            T& getValue(std::size_t i, std::size_t j) { return values[i][j]; }
+            T& get_value(std::size_t i, std::size_t j) { return values[i][j]; }
 
             // Return an immutable reference to the value at row `i` and column `j`
-            const T& getValue(std::size_t i, std::size_t j) const { return values[i][j]; }
+            const T& get_value(std::size_t i, std::size_t j) const { return values[i][j]; }
 
             // Post-multiply the matrix in-place by a compatible square matrix of the same type
-            Matrix& operator*=(const Matrix<columns, columns, T>& matrix) {
+            Matrix& operator*=(const Matrix<Columns, Columns, T>& matrix) {
                 *this = *this * matrix;
                 return *this;
             }
 
         private:
-            std::array<std::array<T, columns>, rows> values{};
+            std::array<std::array<T, Columns>, Rows> values{};
     };
 
     // TODO: inverses and matrix "division"
@@ -157,25 +157,25 @@ namespace eulerus::linear_algebra {
     /**
      * @brief Create a square identity matrix of a given data type and shape
      * 
-     * @tparam dimension Number of rows and columns in the matrix
+     * @tparam Dimension Number of rows and columns in the matrix
      * @tparam T Data type of the matrix's values
      * @param identity "Identity" value to fill the matrix's main diagonal. Defaults to the equivalent of '1' for the type `T`
-     * @param nonIdentity Value to fill the rest of the matrix. Defaults to the default value of type `T`
-     * @return constexpr Matrix<dimension, dimension, T> 
+     * @param non_identity Value to fill the rest of the matrix. Defaults to the default value of type `T`
+     * @return constexpr Matrix<Dimension, Dimension, T>
      */
-    template <std::size_t dimension, typename T = double>
-    constexpr Matrix<dimension, dimension, T> Identity(T identity = T(1), T nonIdentity = T()) {
-        Matrix<dimension, dimension, T> matrix;
+    template <std::size_t Dimension, typename T = double>
+    constexpr Matrix<Dimension, Dimension, T> Identity(T identity = T(1), T non_identity = T()) {
+        Matrix<Dimension, Dimension, T> matrix;
 
-        if (nonIdentity != T()) {
-            for (std::size_t i = 0; i < dimension; i++) {
-                for (std::size_t j = 0; j < dimension; j++) {
-                    matrix[i][j] = nonIdentity;
+        if (non_identity != T()) {
+            for (std::size_t i = 0; i < Dimension; i++) {
+                for (std::size_t j = 0; j < Dimension; j++) {
+                    matrix[i][j] = non_identity;
                 }
             }
         }
 
-        for (std::size_t i = 0; i < dimension; i++) {
+        for (std::size_t i = 0; i < Dimension; i++) {
             matrix[i][i] = identity;
         }
 
@@ -183,13 +183,13 @@ namespace eulerus::linear_algebra {
     }
 
     // Return the transpose of `matrix` 
-    template <std::size_t rows, std::size_t columns, typename T>
-    constexpr Matrix<columns, rows, T> transpose(const Matrix<rows, columns, T>& matrix) {
-        Matrix<columns, rows, T> transposed;
+    template <std::size_t Rows, std::size_t Columns, typename T>
+    constexpr Matrix<Columns, Rows, T> transpose(const Matrix<Rows, Columns, T>& matrix) {
+        Matrix<Columns, Rows, T> transposed;
 
         for (std::size_t i = 0; i < matrix.shape[0]; i++) { 
             for (std::size_t j = 0; j < matrix.shape[1]; j++) { 
-                transposed.getValue(j, i) = matrix.getValue(i, j);
+                transposed.get_value(j, i) = matrix.get_value(i, j);
             }
         }
 
@@ -197,17 +197,17 @@ namespace eulerus::linear_algebra {
     }
 
     // Matrix-multiply the M x N matrix `left` by the N x P matrix `right` to return a new M x P matrix
-    template <std::size_t rows, std::size_t columns, std::size_t columns2, typename T, typename T2>
+    template <std::size_t Rows, std::size_t Columns, std::size_t Columns2, typename T, typename T2>
     requires requires (T a, T2 b) { a * b; }
-    auto operator*(const Matrix<rows, columns, T>& left, const Matrix<columns, columns2, T2>& right) {
+    auto operator*(const Matrix<Rows, Columns, T>& left, const Matrix<Columns, Columns2, T2>& right) {
         using Result = decltype(std::declval<T>() * std::declval<T2>());
-        Matrix<rows, columns2, Result> product;
+        Matrix<Rows, Columns2, Result> product;
 
-        for (std::size_t i = 0; i < rows; i++) {
-            for (std::size_t j = 0; j < columns2; j++) {
-                product.getValue(i, j) = left.getValue(i, 0) * right.getValue(0, j);
-                for (std::size_t k = 1; k < columns; k++) {
-                    product.getValue(i, j) += left.getValue(i, k) * right.getValue(k, j); 
+        for (std::size_t i = 0; i < Rows; i++) {
+            for (std::size_t j = 0; j < Columns2; j++) {
+                product.get_value(i, j) = left.get_value(i, 0) * right.get_value(0, j);
+                for (std::size_t k = 1; k < Columns; k++) {
+                    product.get_value(i, j) += left.get_value(i, k) * right.get_value(k, j);
                 }
             }
         }
@@ -221,7 +221,7 @@ namespace eulerus::linear_algebra {
     M& operator*=(M& matrix, const Other& other) {
         for (std::size_t i = 0; i < M::shape[0]; i++) {
             for (std::size_t j = 0; j < M::shape[1]; j++) {
-                matrix.getValue(i, j) *= other;
+                matrix.get_value(i, j) *= other;
             }
         }
         return matrix;
@@ -233,7 +233,7 @@ namespace eulerus::linear_algebra {
     M& operator/=(M& matrix, const Other& other) {
         for (std::size_t i = 0; i < M::shape[0]; i++) {
             for (std::size_t j = 0; j < M::shape[1]; j++) {
-                matrix.getValue(i, j) /= other;
+                matrix.get_value(i, j) /= other;
             }
         }
 
@@ -246,7 +246,7 @@ namespace eulerus::linear_algebra {
     M& operator+=(M& matrix, const M2& other) {
         for (std::size_t i = 0; i < M::shape[0]; i++) {
             for (std::size_t j = 0; j < M::shape[1]; j++) {
-                matrix.getValue(i, j) += other.getValue(i, j);
+                matrix.get_value(i, j) += other.get_value(i, j);
             }
         }
 
@@ -259,7 +259,7 @@ namespace eulerus::linear_algebra {
     M& operator-=(M& matrix, const M2& other) {
         for (std::size_t i = 0; i < M::shape[0]; i++) {
             for (std::size_t j = 0; j < M::shape[1]; j++) {
-                matrix.getValue(i, j) -= other.getValue(i, j);
+                matrix.get_value(i, j) -= other.get_value(i, j);
             }
         }
 
@@ -313,44 +313,44 @@ namespace eulerus::linear_algebra {
     /* -------------------------------------------------------------------------- */
 
     /**
-    * @brief Vector class supporting different dimensions and data types
-    * 
-    * @tparam dimension Number of values held by the vector
-    * @tparam T Data type of the vector's values
-    */
-    template <std::size_t dimension, typename T = double>
-    requires (dimension > 0)
-    class Vector : public Matrix<dimension, 1, T> {
+     * @brief Vector class supporting different dimensions and data types
+     * 
+     * @tparam Dimension Number of values held by the vector
+     * @tparam T Data type of the vector's values
+     */
+    template <std::size_t Dimension, typename T = double>
+    requires (Dimension > 0)
+    class Vector : public Matrix<Dimension, 1, T> {
         public:
             // Construct a vector with a default initialization of its values
             Vector() = default;
 
             // Construct a vector from an array of values
-            Vector(std::initializer_list<T> args) : Matrix<dimension, 1, T>(args) { assert(args.size() == dimension); }
+            Vector(std::initializer_list<T> args) : Matrix<Dimension, 1, T>(args) { assert(args.size() == Dimension); }
 
             // Construct a vector from an N x 1 matrix
-            Vector(const Matrix<dimension, 1, T>& matrix) : Matrix<dimension, 1, T>(matrix) {}
+            Vector(const Matrix<Dimension, 1, T>& matrix) : Matrix<Dimension, 1, T>(matrix) {}
 
             // Return a mutable reference to the value at `index`
-            T& operator[](std::size_t index) { return Matrix<dimension, 1, T>::operator[](index)[0]; }
+            T& operator[](std::size_t index) { return Matrix<Dimension, 1, T>::operator[](index)[0]; }
 
             // Return an immutable reference to the value at `index`
-            const T& operator[](std::size_t index) const { return Matrix<dimension, 1, T>::operator[](index)[0]; }
+            const T& operator[](std::size_t index) const { return Matrix<Dimension, 1, T>::operator[](index)[0]; }
 
             // Pre-multiply the vector in-place by a compatible square matrix of the same type
-            Vector& operator*=(const Matrix<dimension, dimension, T>& matrix) {
+            Vector& operator*=(const Matrix<Dimension, Dimension, T>& matrix) {
                 *this = matrix * *this;
                 return *this;
             }
     };
 
     // Return the scalar/dot product between vectors `left` and `right`
-    template <std::size_t dimension, typename T, typename T2>
+    template <std::size_t Dimension, typename T, typename T2>
     requires requires(T a, T2 b) {a * b;} 
-    auto operator*(const Vector<dimension, T>& left, const Vector<dimension, T2>& right) {
+    auto operator*(const Vector<Dimension, T>& left, const Vector<Dimension, T2>& right) {
         auto sum = left[0] * right[0];
         
-        for (std::size_t i = 1; i < dimension; i++) {
+        for (std::size_t i = 1; i < Dimension; i++) {
             sum += left[i] * right[i];
         }
 
@@ -358,11 +358,11 @@ namespace eulerus::linear_algebra {
     }
 
     // Pre-multiply `vector` by `matrix` to return a new vector
-    template <std::size_t rows, std::size_t columns, typename T, typename T2>
+    template <std::size_t Rows, std::size_t Columns, typename T, typename T2>
     requires requires (T a, T2 b) { a * b; }
-    auto operator*(const Matrix<rows, columns, T>& matrix, const Vector<columns, T2>& vector) {
+    auto operator*(const Matrix<Rows, Columns, T>& matrix, const Vector<Columns, T2>& vector) {
         using Result = decltype(std::declval<T>() * std::declval<T2>());
-        const auto& converted = static_cast<const Matrix<rows, 1, T2>&>(vector);
-        return Vector<rows, Result>(matrix * converted);
+        const auto& converted = static_cast<const Matrix<Rows, 1, T2>&>(vector);
+        return Vector<Rows, Result>(matrix * converted);
     }
 }
