@@ -99,24 +99,8 @@ namespace eulerus::linear_algebra {
             }
 
             // Return the matrix in row echelon form
-            Matrix row_echelon_form() const {
-                Matrix<Rows, Columns, T> matrix = *this;
-
-                for (std::size_t i = 0; i < Rows; i++) {
-                    if (matrix[i][i] == T()) continue;
-                    T pivot = matrix[i][i];
-
-                    for (std::size_t j = i + 1; j < Rows; j++) {
-                        if (matrix[j][i] == T()) continue;
-                        auto factor = matrix[j][i] / pivot;
-
-                        for (std::size_t k = i; k < Columns; k++) {
-                            matrix[j][k] -= factor * matrix[i][k];
-                        }
-                    }
-                }
-                
-                return matrix;
+            Matrix<Rows, Columns, T> row_echelon_form() const {
+                return _row_echelon_form().ref_matrix;
             }
 
             // Return the determinant of a square matrix
@@ -127,15 +111,20 @@ namespace eulerus::linear_algebra {
                 else if constexpr (Rows == 2) {
                     return values[0][0] * values[1][1] - values[0][1] * values[1][0];
                 }
-                else { // size > 2: calculate the determinant from the matrix's row echelon form
-                    Matrix<Rows, Columns, T> ref_matrix = row_echelon_form();
-                    T result = ref_matrix[0][0];
+                else { 
+                    // size > 2: calculate the determinant from the matrix's row echelon form
 
+                    REFData ref_data = _row_echelon_form();
+                    const Matrix<Rows, Columns, T>& ref_matrix = ref_data.ref_matrix;
+
+                    T result = ref_matrix[0][0];
+                    
                     for (std::size_t i = 1; i < Rows; i++) {
+                        if (ref_matrix[i][i] == T()) return T();
                         result *= ref_matrix[i][i];
                     }
                     
-                    return result;
+                    return result * ref_data.determinant_sign;
                 }
             }
 
@@ -162,6 +151,56 @@ namespace eulerus::linear_algebra {
 
         private:
             std::array<std::array<T, Columns>, Rows> values{};
+
+            // Helper struct for row echelon form calculations
+            struct REFData {
+                Matrix ref_matrix;
+                int determinant_sign = 1;
+            };
+
+            // Internal implementation of the row_echelon_form function, with additional information for determinant calculations
+            REFData _row_echelon_form() const {
+                Matrix<Rows, Columns, T> matrix = *this;
+                int determinant_sign = 1;
+ 
+                for (std::size_t row = 0, column = 0; row < Rows && column < Columns;) {
+                    T pivot = matrix[row][column];
+
+                    // If the pivot is zero, swap the row with the first row below it that has a non-zero pivot in the same column
+                    if (matrix[row][column] == T()) {
+                        bool swapped = false;
+                        for (std::size_t i = row + 1; i < Rows; i++) {
+                            if (matrix[i][column] != T()) {
+                                std::swap(matrix[row], matrix[i]);
+                                pivot = matrix[row][column];
+                                determinant_sign *= -1;
+                                swapped = true;
+                                break;
+                            }
+                        }
+
+                        // If no non-zero pivot was found, skip this pivot and move to the next column on the same row
+                        if (!swapped) {
+                            column++;
+                            continue; 
+                        }
+                    }
+
+                    for (std::size_t i = row + 1; i < Rows; i++) {
+                        if (matrix[i][column] == T()) continue; // Skip the row if the factor would be zero
+                        T factor = matrix[i][column] / pivot;
+
+                        for (std::size_t j = column; j < Columns; j++) {
+                            matrix[i][j] -= factor * matrix[row][j];
+                        }
+                    }
+
+                    row++;
+                    column++;
+                }
+                
+                return REFData{matrix, determinant_sign};
+            }
     };
 
     // TODO: inverses and matrix "division"
