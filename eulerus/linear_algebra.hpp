@@ -212,7 +212,6 @@ namespace eulerus::linear_algebra {
      * @tparam T Data type of the matrix's values
      * @param identity "Identity" value to fill the matrix's main diagonal. Defaults to the equivalent of '1' for the type `T`
      * @param non_identity Value to fill the rest of the matrix. Defaults to the default value of type `T`
-     * @return constexpr Matrix<Dimension, Dimension, T>
      */
     template <std::size_t Dimension, typename T = double>
     constexpr Matrix<Dimension, Dimension, T> Identity(T identity = T(1), T non_identity = T()) {
