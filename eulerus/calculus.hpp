@@ -61,14 +61,14 @@ namespace eulerus::calculus {
     }
 
     /**
-     * @brief Numerically calculate the `n`th derivative of a single-variable complex-valued function `f` at the value `x`, using Cauchy's integral formula
+     * @brief Numerically calculate the complex `n`th derivative of a single-variable complex-valued function `f` at the value `x`, using Cauchy's integral formula
      * 
      * @tparam T Data type of the function's arguments
      * @tparam Func Function type
      * @param f Complex-valued function to differentiate
      * @param x Value to differentiate the function at
      * @param n Order of the derivative
-     * @param r Radius of the integration contour. The optimal radius depends on the function and derivative order, and can return incorrect results if the contour contains singularities of the function
+     * @param r Radius of the integration contour. The optimal radius depends on the function and derivative order, and should be chosen so that the contour does not contain singularities of the function
      * @param iterations Number of subintervals for the numerical contour integration
      */
     template <typename T, typename Func>
@@ -80,7 +80,8 @@ namespace eulerus::calculus {
 
         double two_pi = 2.0 * std::numbers::pi;
 
-        long long n_factorial = 1;
+        // Note: this value will likely overflow for large `n`
+        double n_factorial = 1.0;
         for (int i = 2; i <= n; i++) {
             n_factorial *= i;
         }
@@ -92,7 +93,7 @@ namespace eulerus::calculus {
             return f(z + x) / z_n; 
         };
 
-        auto result = integrate(F, 0.0, two_pi, iterations) * (double)n_factorial / two_pi;
-        return std::real(result); // TODO: return complex result if the complex derivative is requested
+        // Note: if `f` returns complex values, this returns the complex (both real and imaginary) value of the derivative
+        return integrate(F, 0.0, two_pi, iterations) * n_factorial / two_pi; 
     }
 }
