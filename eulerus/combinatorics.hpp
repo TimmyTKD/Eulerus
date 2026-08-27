@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+
 namespace eulerus::combinatorics {
     /* -------------------------------------------------------------------------- */
     /*                       Integer Combinatorics Functions                       */
@@ -7,7 +9,8 @@ namespace eulerus::combinatorics {
 
     // Calculate the factorial of `n` (or `n!`)
     inline unsigned long long factorial(int n) {
-        if (n < 0) return 0;
+        assert(n >= 0);
+
         if (n == 0 || n == 1) return 1;
 
         // Note: this value will likely overflow for large `n`
@@ -21,7 +24,10 @@ namespace eulerus::combinatorics {
 
     // Calculate the number of `r`-combinations of `n` (or `n` choose `r`)
     inline unsigned long long nCr(int n, int r) {
-        if (r < 0 || r > n) return 0;
+        assert(n >= 0);
+        assert(r >= 0);
+
+        if (r > n) return 0;
         if (r == 0 || r == n) return 1;
         if (r > n / 2) r = n - r;
         
@@ -37,7 +43,10 @@ namespace eulerus::combinatorics {
 
     // Calculate the number of `r`-permutations of `n` (or `n` permute `r`)
     inline unsigned long long nPr(int n, int r) {
-        if (r < 0 || r > n) return 0;
+        assert(n >= 0);
+        assert(r >= 0);
+        
+        if (r > n) return 0;
         if (r == 0) return 1;
         if (r == n) return factorial(n);
         
