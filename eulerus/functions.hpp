@@ -136,13 +136,20 @@ namespace eulerus::functions {
 
     /* -------------------------------------------------------------------------- */
 
-    // "Variable" function, which simply returns a function wrapper for the input
+    // "Variable" function, which simply returns a function wrapper for the input. Useful for input transformations like f(2x) or polynomials like x^2+x+1
     inline Function var([](auto x) { return x; });
+
+    inline Function sqrt([](auto x) { return std::sqrt(x); });
+    inline Function cbrt([](auto x) { return std::cbrt(x); });
+
+    inline Function exp([](auto x) { return std::exp(x); });
+    inline Function ln([](auto x) { return std::log(x); }); 
+    inline auto& log = ln;
+    inline Function log10([](auto x) { return std::log10(x); });
 
     inline Function sin([](auto x) { return std::sin(x); });
     inline Function cos([](auto x) { return std::cos(x); });
     inline Function tan([](auto x) { return std::tan(x); });
-    
     inline Function csc([](auto x) { return floating_cast<decltype(x)>(1.0) / std::sin(x); });
     inline Function sec([](auto x) { return floating_cast<decltype(x)>(1.0) / std::cos(x); });
     inline Function cot([](auto x) { return floating_cast<decltype(x)>(1.0) / std::tan(x); });
@@ -150,8 +157,33 @@ namespace eulerus::functions {
     inline Function asin([](auto x) { return std::asin(x); });
     inline Function acos([](auto x) { return std::acos(x); });
     inline Function atan([](auto x) { return std::atan(x); });
-    
     inline Function acsc([](auto x) { return std::asin(floating_cast<decltype(x)>(1.0) / x); });
     inline Function asec([](auto x) { return std::acos(floating_cast<decltype(x)>(1.0) / x); });
     inline Function acot([](auto x) { return std::numbers::pi_v<to_floating_t<decltype(x)>> / floating_cast<decltype(x)>(2.0) - std::atan(x); });
+    inline auto& arcsin = asin;
+    inline auto& arccos = acos;
+    inline auto& arctan = atan;
+    inline auto& arccsc = acsc;
+    inline auto& arcsec = asec;
+    inline auto& arccot = acot;
+
+    inline Function sinh([](auto x) { return std::sinh(x); });
+    inline Function cosh([](auto x) { return std::cosh(x); });
+    inline Function tanh([](auto x) { return std::tanh(x); });
+    inline Function csch([](auto x) { return floating_cast<decltype(x)>(1.0) / std::sinh(x); });
+    inline Function sech([](auto x) { return floating_cast<decltype(x)>(1.0) / std::cosh(x); });
+    inline Function coth([](auto x) { return floating_cast<decltype(x)>(1.0) / std::tanh(x); });
+
+    inline Function asinh([](auto x) { return std::asinh(x); });
+    inline Function acosh([](auto x) { return std::acosh(x); });
+    inline Function atanh([](auto x) { return std::atanh(x); });
+    inline Function acsch([](auto x) { return std::asinh(floating_cast<decltype(x)>(1.0) / x); });
+    inline Function asech([](auto x) { return std::acosh(floating_cast<decltype(x)>(1.0) / x); });
+    inline Function acoth([](auto x) { return std::atanh(floating_cast<decltype(x)>(1.0) / x); });
+    inline auto& arcsinh = asinh;
+    inline auto& arccosh = acosh;
+    inline auto& arctanh = atanh;
+    inline auto& arccsch = acsch;
+    inline auto& arcsech = asech;
+    inline auto& arccoth = acoth;
 }
