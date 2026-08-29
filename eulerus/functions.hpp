@@ -24,13 +24,13 @@ namespace eulerus::functions {
 
             // Call the internal function implementation
             template<typename T>
-            auto operator()(T arg) {
+            auto operator()(T arg) const {
                 return _function(arg);
             }
 
             // Compose the function with another function
             template<typename F>
-            auto operator()(const Function<F>& inner) {
+            auto operator()(const Function<F>& inner) const {
                 auto outer = this->_function;
                 auto f = [outer, inner](auto x) { return outer(inner(x)); };
                 return Function<decltype(f)>(f);
