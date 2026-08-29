@@ -344,8 +344,7 @@ namespace eulerus::linear_algebra {
     template <typename M, typename M2>
     requires requires(typename M::MatrixDataType a, typename M2::MatrixDataType b) { a += b; } && (M::shape == M2::shape)
     auto operator+(const M& left, const M2& right) {
-        using Common = std::common_type_t<typename M::MatrixDataType, typename M2::MatrixDataType>;
-        auto result = left.template cast<Common>();
+        M result = left;
         return result += right;
     }
 
@@ -353,8 +352,7 @@ namespace eulerus::linear_algebra {
     template <typename M, typename M2>
     requires requires(typename M::MatrixDataType a, typename M2::MatrixDataType b) { a -= b; } && (M::shape == M2::shape)
     auto operator-(const M& left, const M2& right) {
-        using Common = std::common_type_t<typename M::MatrixDataType, typename M2::MatrixDataType>;
-        auto result = left.template cast<Common>();
+        M result = left;
         return result -= right;
     }
 
