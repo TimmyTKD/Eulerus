@@ -105,7 +105,7 @@ namespace eulerus::linear_algebra {
             }
 
             // Return the determinant of a square matrix
-            const T determinant() requires (Rows == Columns) {
+            const T determinant() const requires (Rows == Columns) {
                 if constexpr (Rows == 1) {
                     return values[0][0];
                 }
@@ -393,10 +393,10 @@ namespace eulerus::linear_algebra {
             }
 
             // Return the square of the vector's magnitude
-            auto sqr_magnitude() { return *this * (*this); }
+            auto sqr_magnitude() const { return *this * (*this); }
 
             // Return the vector's magnitude
-            auto magnitude() { return std::sqrt(sqr_magnitude()); }
+            auto magnitude() const { return std::sqrt(sqr_magnitude()); }
     };
 
     // Return the scalar/dot product between vectors `left` and `right`
