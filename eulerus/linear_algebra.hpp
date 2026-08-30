@@ -68,6 +68,15 @@ namespace eulerus::linear_algebra {
                 }
             }
 
+            // Construct an N x 1 matrix (vector) from any collection
+            template <typename Collection>
+            requires requires(Collection a) {{a[0]} -> std::convertible_to<T>; requires (std::size(a) == Rows);}
+            Matrix(const Collection& args) requires(Columns == 1) {
+                for (std::size_t i = 0; i < Rows; i++) {
+                    values[i][0] = args[i];
+                }
+            }
+
             // Output the matrix to an io stream
             friend std::ostream& operator<<(std::ostream& os, const Matrix& matrix) {
                 os << std::endl;
@@ -376,6 +385,11 @@ namespace eulerus::linear_algebra {
 
             // Construct a vector from an array of values
             Vector(std::initializer_list<T> args) : Matrix<Dimension, 1, T>(args) { assert(args.size() == Dimension); }
+
+            // Construct a vector from any collection
+            template <typename Collection>
+            requires requires(Collection a) {{a[0]} -> std::convertible_to<T>; requires (std::size(a) == Dimension);}
+            Vector(const Collection& args) : Matrix<Dimension, 1, T>(args) { }
 
             // Construct a vector from an N x 1 matrix
             Vector(const Matrix<Dimension, 1, T>& matrix) : Matrix<Dimension, 1, T>(matrix) {}
