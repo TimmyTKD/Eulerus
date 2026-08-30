@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <cmath>
 #include <concepts>
 #include <cstddef>
 #include <initializer_list>
@@ -387,9 +388,15 @@ namespace eulerus::linear_algebra {
 
             // Pre-multiply the vector in-place by a compatible square matrix of the same type
             Vector& operator*=(const Matrix<Dimension, Dimension, T>& matrix) {
-                *this = matrix * *this;
+                *this = matrix * (*this);
                 return *this;
             }
+
+            // Return the square of the vector's magnitude
+            auto sqr_magnitude() { return *this * (*this); }
+
+            // Return the vector's magnitude
+            auto magnitude() { return std::sqrt(sqr_magnitude()); }
     };
 
     // Return the scalar/dot product between vectors `left` and `right`
