@@ -4,11 +4,10 @@
 #include <cmath>
 #include <concepts>
 #include <cstddef>
-#include <initializer_list>
 #include <array>
 #include <iostream>
 #include <type_traits>
-#include <algorithm>
+#include <utility>
 
 namespace eulerus::linear_algebra {
     /* -------------------------------------------------------------------------- */
@@ -32,18 +31,6 @@ namespace eulerus::linear_algebra {
             // Construct a matrix with a default initialization of its values
             Matrix() = default;
 
-            // Construct a matrix from a 2D array of values
-            Matrix(std::initializer_list<std::initializer_list<T>> args) {
-                assert(args.size() == Rows);
-
-                auto row = args.begin();
-                for (std::size_t i = 0; i < Rows; i++) {
-                    assert(row->size() == Columns);
-                    std::copy(row->begin(), row->end(), values[i].begin());
-                    row++;
-                }
-            }
-
             // Construct a matrix from any 2D collection
             template <typename Collection>
             requires requires(Collection a) {{a[0][0]} -> std::convertible_to<T>; requires (std::size(a) == Rows);}
@@ -57,16 +44,10 @@ namespace eulerus::linear_algebra {
                 }
             }
 
-            // Construct an N x 1 matrix (vector) from an array of values
-            Matrix(std::initializer_list<T> args) requires(Columns == 1) {
-                assert(args.size() == Rows);
-
-                auto row = args.begin();
-                for (std::size_t i = 0; i < Rows; i++) {
-                    values[i][0] = *row;
-                    row++;
-                }
-            }
+            // Construct a matrix from multiple arrays of values
+            template <std::convertible_to<T>... Values, std::size_t N>
+            requires (sizeof...(Values) == Rows) && (N == Columns)
+            Matrix(const Values (&...args)[N]) : Matrix(std::array<std::array<T, Columns>, Rows>{std::to_array(args)...}) { }
 
             // Construct an N x 1 matrix (vector) from any collection
             template <typename Collection>
@@ -383,13 +364,15 @@ namespace eulerus::linear_algebra {
             // Construct a vector with a default initialization of its values
             Vector() = default;
 
-            // Construct a vector from an array of values
-            Vector(std::initializer_list<T> args) : Matrix<Dimension, 1, T>(args) { assert(args.size() == Dimension); }
-
             // Construct a vector from any collection
             template <typename Collection>
             requires requires(Collection a) {{a[0]} -> std::convertible_to<T>; requires (std::size(a) == Dimension);}
             Vector(const Collection& args) : Matrix<Dimension, 1, T>(args) { }
+
+            // Construct a vector from multiple values
+            template <std::convertible_to<T>... Values>
+            requires (sizeof...(Values) == Dimension)
+            Vector(const Values&... args) : Vector(std::array<T, Dimension>{args...}) { }
 
             // Construct a vector from an N x 1 matrix
             Vector(const Matrix<Dimension, 1, T>& matrix) : Matrix<Dimension, 1, T>(matrix) {}
