@@ -19,20 +19,23 @@ namespace eulerus::functions {
     template <typename Func> // TODO: require that `Func` is an invocable type of generic arguments
     class Function {
         public:
+            using FunctionType = Func;
+
             // Construct a function object using a base function
             Function(Func f) : _function(std::move(f)) {}
 
             // Call the internal function implementation
-            template<typename T>
-            auto operator()(T arg) const {
-                return _function(arg);
+            template<typename... Args>
+            auto operator()(Args... args) const {
+                return _function(args...);
             }
 
-            // Compose the function with another function
-            template<typename F>
-            auto operator()(const Function<F>& inner) const {
-                auto outer = this->_function;
-                auto f = [outer, inner](auto x) { return outer(inner(x)); };
+            // Compose the function with other functions
+            template<typename... Funcs>
+            requires (Funcs::FunctionType && ...) // TODO: require that `Funcs::FunctionType` is an invocable type of generic arguments
+            auto operator()(const Funcs&... innerFunctions) const {
+                auto outerFunction = this->_function;
+                auto f = [outerFunction, innerFunctions...](auto x) { return outerFunction(innerFunctions(x)...); };
                 return Function<decltype(f)>(f);
             }
 
