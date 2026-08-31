@@ -26,16 +26,30 @@ namespace eulerus::functions {
 
             // Call the internal function implementation
             template<typename... Args>
+            requires ((requires { typename Args::FunctionType; } == false) && ...) // Ensure `Function` objects are not accepted as arguments
             auto operator()(Args... args) const {
                 return _function(args...);
             }
 
             // Compose the function with other functions
             template<typename... Funcs>
-            requires (Funcs::FunctionType && ...) // TODO: require that `Funcs::FunctionType` is an invocable type of generic arguments
-            auto operator()(const Funcs&... innerFunctions) const {
-                auto outerFunction = this->_function;
-                auto f = [outerFunction, innerFunctions...](auto x) { return outerFunction(innerFunctions(x)...); };
+            requires (requires { typename Funcs::FunctionType; } || ...) // Ensure at least one argument is a `Function` object
+            auto operator()(const Funcs&... inner_functions) const {
+                auto outer_function = this->_function;
+
+                auto f = [outer_function, inner_functions...](auto... args) { 
+                    // Helper function to separate handling of constant arguments from function arguments 
+                    auto argument_value = [&args...](auto& inner_function) {
+                        if constexpr (std::is_invocable_v<decltype(inner_function), decltype(args)...>) {
+                            return inner_function(args...);
+                        } else {
+                            return inner_function;
+                        }
+                    };
+
+                    return outer_function(argument_value(inner_functions)...); 
+                };
+
                 return Function<decltype(f)>(f);
             }
 
@@ -46,73 +60,73 @@ namespace eulerus::functions {
     // Add two functions
     template<typename F, typename F2>
     auto operator+(const Function<F>& left, const Function<F2>& right) {
-        return Function([left, right](auto x) { return left(x) + right(x); });
+        return Function([left, right](auto... x) { return left(x...) + right(x...); });
     }
 
     // Add a constant to a function
     template<typename F, typename T>
     auto operator+(const Function<F>& function, const T other) {
-        return Function([function, other](auto x) { return function(x) + other; });
+        return Function([function, other](auto... x) { return function(x...) + other; });
     }
 
     // Add a function to a constant
     template<typename F, typename T>
     auto operator+(const T other, const Function<F>& function) {
-        return Function([function, other](auto x) { return other + function(x); });
+        return Function([function, other](auto... x) { return other + function(x...); });
     }
 
     // Subtract two functions
     template<typename F, typename F2>
     auto operator-(const Function<F>& left, const Function<F2>& right) {
-        return Function([left, right](auto x) { return left(x) - right(x); });
+        return Function([left, right](auto... x) { return left(x...) - right(x...); });
     }
 
     // Subtract a constant from a function
     template<typename F, typename T>
     auto operator-(const Function<F>& function, const T other) {
-        return Function([function, other](auto x) { return function(x) - other; });
+        return Function([function, other](auto... x) { return function(x...) - other; });
     }
 
     // Subtract a function from a constant
     template<typename F, typename T>
     auto operator-(const T other, const Function<F>& function) {
-        return Function([function, other](auto x) { return other - function(x); });
+        return Function([function, other](auto... x) { return other - function(x...); });
     }
 
     // Multiply two functions
     template<typename F, typename F2>
     auto operator*(const Function<F>& left, const Function<F2>& right) {
-        return Function([left, right](auto x) { return left(x) * right(x); });
+        return Function([left, right](auto... x) { return left(x...) * right(x...); });
     }
 
     // Multiply a function by a constant
     template<typename F, typename T>
     auto operator*(const Function<F>& function, const T other) {
-        return Function([function, other](auto x) { return function(x) * other; });
+        return Function([function, other](auto... x) { return function(x...) * other; });
     }
 
     // Multiply a constant by a function
     template<typename F, typename T>
     auto operator*(const T other, const Function<F>& function) {
-        return Function([function, other](auto x) { return other * function(x); });
+        return Function([function, other](auto... x) { return other * function(x...); });
     }
 
     // Divide two functions
     template<typename F, typename F2>
     auto operator/(const Function<F>& left, const Function<F2>& right) {
-        return Function([left, right](auto x) { return left(x) / right(x); });
+        return Function([left, right](auto... x) { return left(x...) / right(x...); });
     }
 
     // Divide a function by a constant
     template<typename F, typename T>
     auto operator/(const Function<F>& function, const T other) {
-        return Function([function, other](auto x) { return function(x) / other; });
+        return Function([function, other](auto... x) { return function(x...) / other; });
     }
 
     // Divide a constant by a function
     template<typename F, typename T>
     auto operator/(const T other, const Function<F>& function) {
-        return Function([function, other](auto x) { return other / function(x); });
+        return Function([function, other](auto... x) { return other / function(x...); });
     }
 
     /* -------------------------------------------------------------------------- */
