@@ -50,7 +50,7 @@ namespace eulerus::functions {
                     return outer_function(argument_value(inner_functions)...); 
                 };
 
-                return Function<decltype(f)>(f);
+                return Function<decltype(f)>(std::move(f));
             }
 
         private:
