@@ -156,6 +156,7 @@ namespace eulerus::functions {
     // "Variable" function, which simply returns a function wrapper for the input. Useful for input transformations like f(2x) or polynomials like x^2+x+1
     inline Function var([](auto x) { return x; });
 
+    inline Function sqr([](auto x) { return std::pow(x, floating_cast<decltype(x)>(2.0)); });
     inline Function pow([](auto x, auto n) { return std::pow(x, n); });
     inline Function sqrt([](auto x) { return std::sqrt(x); });
     inline Function cbrt([](auto x) { return std::cbrt(x); });
@@ -164,6 +165,7 @@ namespace eulerus::functions {
     inline Function exp([](auto x) { return std::exp(x); });
     inline Function ln([](auto x) { return std::log(x); }); 
     inline Function log10([](auto x) { return std::log10(x); });
+    inline Function log2([](auto x) { return std::log2(x); });
     inline Function log([]<typename T, typename T2 = T>(T x, T2 n = std::numbers::e_v<to_floating_t<T>>) { return std::log(x) / std::log(n); });
 
     inline Function sin([](auto x) { return std::sin(x); });
