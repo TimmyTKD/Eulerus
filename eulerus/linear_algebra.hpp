@@ -196,6 +196,10 @@ namespace eulerus::linear_algebra {
 
     // TODO: inverses and matrix "division"
 
+    // Template deduction guide to deduce the Matrix type from multiple arrays of values 
+    template <typename... Values, typename T = std::common_type_t<Values...>, std::size_t Columns>
+    Matrix(const Values (&...args)[Columns]) -> Matrix<sizeof...(Values), Columns, T>;
+
     /**
      * @brief Create a square identity matrix of a given data type and shape
      * 
@@ -395,6 +399,10 @@ namespace eulerus::linear_algebra {
             // Return the vector's magnitude
             auto magnitude() const { return std::sqrt(sqr_magnitude()); }
     };
+
+    // Template deduction guide to deduce the Vector type from multiple values
+    template <typename... Values, typename T = std::common_type_t<Values...>>
+    Vector(const Values&... args) -> Vector<sizeof...(Values), T>;
 
     // Return the scalar/dot product between vectors `left` and `right`
     template <std::size_t Dimension, typename T, typename T2>
