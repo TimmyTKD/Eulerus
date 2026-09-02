@@ -21,13 +21,17 @@ namespace eulerus::functions {
     class Function {
         public:
             using FunctionType = Func;
-            const std::shared_ptr<Func> _function; // TODO: make this private and add a getter for it, or use friend functions to allow access
 
             // Construct a null function wrapper by default
             Function() = default;
 
             // Construct a function object using a base function
-            Function(Func f) : _function(std::make_shared<Func>(std::move(f))) {}
+            Function(Func f) : _function(std::make_shared<const Func>(std::move(f))) {}
+
+            // Return an immutable shared pointer to the internal function implementation
+            const std::shared_ptr<const Func> operator&() const { 
+                return _function; 
+            }
 
             // Call the internal function implementation
             template<typename... Args>
@@ -44,7 +48,7 @@ namespace eulerus::functions {
                 
                 auto capture_value = [](auto inner_function) {
                     if constexpr (requires { typename decltype(inner_function)::FunctionType; }) {
-                        return inner_function._function;
+                        return &inner_function;
                     } else {
                         return inner_function;
                     }
@@ -65,78 +69,81 @@ namespace eulerus::functions {
 
                 return Function<decltype(f)>(std::move(f));
             }
+
+        private:
+            std::shared_ptr<const Func> _function;
     };
 
     // Add two functions
     template<typename F, typename F2>
     auto operator+(const Function<F>& left, const Function<F2>& right) {
-        return Function([left_ptr = left._function, right_ptr = right._function](auto... x) { return (*left_ptr)(x...) + (*right_ptr)(x...); });
+        return Function([left_ptr = &left, right_ptr = &right](auto... x) { return (*left_ptr)(x...) + (*right_ptr)(x...); });
     }
 
     // Add a constant to a function
     template<typename F, typename T>
     auto operator+(const Function<F>& function, const T other) {
-        return Function([function_ptr = function._function, other](auto... x) { return (*function_ptr)(x...) + other; });
+        return Function([function_ptr = &function, other](auto... x) { return (*function_ptr)(x...) + other; });
     }
 
     // Add a function to a constant
     template<typename F, typename T>
     auto operator+(const T other, const Function<F>& function) {
-        return Function([function_ptr = function._function, other](auto... x) { return other + (*function_ptr)(x...); });
+        return Function([function_ptr = &function, other](auto... x) { return other + (*function_ptr)(x...); });
     }
 
     // Subtract two functions
     template<typename F, typename F2>
     auto operator-(const Function<F>& left, const Function<F2>& right) {
-        return Function([left_ptr = left._function, right_ptr = right._function](auto... x) { return (*left_ptr)(x...) - (*right_ptr)(x...); });
+        return Function([left_ptr = &left, right_ptr = &right](auto... x) { return (*left_ptr)(x...) - (*right_ptr)(x...); });
     }
 
     // Subtract a constant from a function
     template<typename F, typename T>
     auto operator-(const Function<F>& function, const T other) {
-        return Function([function_ptr = function._function, other](auto... x) { return (*function_ptr)(x...) - other; });
+        return Function([function_ptr = &function, other](auto... x) { return (*function_ptr)(x...) - other; });
     }
 
     // Subtract a function from a constant
     template<typename F, typename T>
     auto operator-(const T other, const Function<F>& function) {
-        return Function([function_ptr = function._function, other](auto... x) { return other - (*function_ptr)(x...); });
+        return Function([function_ptr = &function, other](auto... x) { return other - (*function_ptr)(x...); });
     }
 
     // Multiply two functions
     template<typename F, typename F2>
     auto operator*(const Function<F>& left, const Function<F2>& right) {
-        return Function([left_ptr = left._function, right_ptr = right._function](auto... x) { return (*left_ptr)(x...) * (*right_ptr)(x...); });
+        return Function([left_ptr = &left, right_ptr = &right](auto... x) { return (*left_ptr)(x...) * (*right_ptr)(x...); });
     }
 
     // Multiply a function by a constant
     template<typename F, typename T>
     auto operator*(const Function<F>& function, const T other) {
-        return Function([function_ptr = function._function, other](auto... x) { return (*function_ptr)(x...) * other; });
+        return Function([function_ptr = &function, other](auto... x) { return (*function_ptr)(x...) * other; });
     }
 
     // Multiply a constant by a function
     template<typename F, typename T>
     auto operator*(const T other, const Function<F>& function) {
-        return Function([function_ptr = function._function, other](auto... x) { return other * (*function_ptr)(x...); });
+        return Function([function_ptr = &function, other](auto... x) { return other * (*function_ptr)(x...); });
     }
 
     // Divide two functions
     template<typename F, typename F2>
     auto operator/(const Function<F>& left, const Function<F2>& right) {
-        return Function([left_ptr = left._function, right_ptr = right._function](auto... x) { return (*left_ptr)(x...) / (*right_ptr)(x...); });
+        return Function([left_ptr = &left, right_ptr = &right](auto... x) { return (*left_ptr)(x...) / (*right_ptr)(x...); });
     }
 
     // Divide a function by a constant
     template<typename F, typename T>
     auto operator/(const Function<F>& function, const T other) {
-        return Function([function_ptr = function._function, other](auto... x) { return (*function_ptr)(x...) / other; });
+        return Function([function_ptr = &function, other](auto... x) { return (*function_ptr)(x...) / other; });
     }
 
     // Divide a constant by a function
     template<typename F, typename T>
     auto operator/(const T other, const Function<F>& function) {
-        return Function([function_ptr = function._function, other](auto... x) { return other / (*function_ptr)(x...); });
+        return Function([function_ptr = &function, other](auto... x) { return other / (*function_ptr)(x...); });
     }
 
     /* -------------------------------------------------------------------------- */
