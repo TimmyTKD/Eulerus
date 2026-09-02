@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <complex>
+#include <memory>
 #include <numbers>
 #include <type_traits>
 #include <utility>
@@ -20,12 +21,13 @@ namespace eulerus::functions {
     class Function {
         public:
             using FunctionType = Func;
+            const std::shared_ptr<Func> _function; // TODO: make this private and add a getter for it, or use friend functions to allow access
 
-            // Default constructor for Function
-            Function() : _function(nullptr) {}
+            // Construct a null function wrapper by default
+            Function() = default;
 
             // Construct a function object using a base function
-            Function(Func f) : _function(&f) {}
+            Function(Func f) : _function(std::make_shared<Func>(std::move(f))) {}
 
             // Call the internal function implementation
             template<typename... Args>
@@ -38,98 +40,103 @@ namespace eulerus::functions {
             template<typename... Funcs>
             requires (requires { typename Funcs::FunctionType; } || ...) // Ensure at least one argument is a `Function` object
             auto operator()(const Funcs&... inner_functions) const {
-                auto outer_function = *(this->_function);
+                auto outer_ptr = this->_function;
+                
+                auto capture_value = [](auto inner_function) {
+                    if constexpr (requires { typename decltype(inner_function)::FunctionType; }) {
+                        return inner_function._function;
+                    } else {
+                        return inner_function;
+                    }
+                };
 
-                auto f = [outer_function, inner_functions...](auto... args) { 
+                auto f = [outer_ptr, ...inner_values = capture_value(inner_functions)](auto... args) { 
                     // Helper function to separate handling of constant arguments from function arguments 
-                    auto argument_value = [&args...](auto& inner_function) {
-                        if constexpr (std::is_invocable_v<decltype(inner_function), decltype(args)...>) {
-                            return inner_function(args...);
+                    auto argument_value = [&args...](auto inner_value) {
+                        if constexpr (std::is_invocable_v<typename decltype(inner_value)::element_type, decltype(args)...>) {
+                            return (*inner_value)(args...);
                         } else {
-                            return inner_function;
+                            return inner_value;
                         }
                     };
 
-                    return outer_function(argument_value(inner_functions)...); 
+                    return (*outer_ptr)(argument_value(inner_values)...); 
                 };
 
                 return Function<decltype(f)>(std::move(f));
             }
-
-        private:
-            std::shared_ptr<Func> _function;
     };
 
     // Add two functions
     template<typename F, typename F2>
     auto operator+(const Function<F>& left, const Function<F2>& right) {
-        return Function([left, right](auto... x) { return left(x...) + right(x...); });
+        return Function([left_ptr = left._function, right_ptr = right._function](auto... x) { return (*left_ptr)(x...) + (*right_ptr)(x...); });
     }
 
     // Add a constant to a function
     template<typename F, typename T>
     auto operator+(const Function<F>& function, const T other) {
-        return Function([function, other](auto... x) { return function(x...) + other; });
+        return Function([function_ptr = function._function, other](auto... x) { return (*function_ptr)(x...) + other; });
     }
 
     // Add a function to a constant
     template<typename F, typename T>
     auto operator+(const T other, const Function<F>& function) {
-        return Function([function, other](auto... x) { return other + function(x...); });
+        return Function([function_ptr = function._function, other](auto... x) { return other + (*function_ptr)(x...); });
     }
 
     // Subtract two functions
     template<typename F, typename F2>
     auto operator-(const Function<F>& left, const Function<F2>& right) {
-        return Function([left, right](auto... x) { return left(x...) - right(x...); });
+        return Function([left_ptr = left._function, right_ptr = right._function](auto... x) { return (*left_ptr)(x...) - (*right_ptr)(x...); });
     }
 
     // Subtract a constant from a function
     template<typename F, typename T>
     auto operator-(const Function<F>& function, const T other) {
-        return Function([function, other](auto... x) { return function(x...) - other; });
+        return Function([function_ptr = function._function, other](auto... x) { return (*function_ptr)(x...) - other; });
     }
 
     // Subtract a function from a constant
     template<typename F, typename T>
     auto operator-(const T other, const Function<F>& function) {
-        return Function([function, other](auto... x) { return other - function(x...); });
+        return Function([function_ptr = function._function, other](auto... x) { return other - (*function_ptr)(x...); });
     }
 
     // Multiply two functions
     template<typename F, typename F2>
     auto operator*(const Function<F>& left, const Function<F2>& right) {
-        return Function([left, right](auto... x) { return left(x...) * right(x...); });
+        return Function([left_ptr = left._function, right_ptr = right._function](auto... x) { return (*left_ptr)(x...) * (*right_ptr)(x...); });
     }
 
     // Multiply a function by a constant
     template<typename F, typename T>
     auto operator*(const Function<F>& function, const T other) {
-        return Function([function, other](auto... x) { return function(x...) * other; });
+        return Function([function_ptr = function._function, other](auto... x) { return (*function_ptr)(x...) * other; });
     }
 
     // Multiply a constant by a function
     template<typename F, typename T>
     auto operator*(const T other, const Function<F>& function) {
-        return Function([function, other](auto... x) { return other * function(x...); });
+        return Function([function_ptr = function._function, other](auto... x) { return other * (*function_ptr)(x...); });
     }
 
     // Divide two functions
     template<typename F, typename F2>
     auto operator/(const Function<F>& left, const Function<F2>& right) {
-        return Function([left, right](auto... x) { return left(x...) / right(x...); });
+        return Function([left_ptr = left._function, right_ptr = right._function](auto... x) { return (*left_ptr)(x...) / (*right_ptr)(x...); });
     }
 
     // Divide a function by a constant
     template<typename F, typename T>
     auto operator/(const Function<F>& function, const T other) {
-        return Function([function, other](auto... x) { return function(x...) / other; });
+        return Function([function_ptr = function._function, other](auto... x) { return (*function_ptr)(x...) / other; });
     }
 
     // Divide a constant by a function
     template<typename F, typename T>
     auto operator/(const T other, const Function<F>& function) {
-        return Function([function, other](auto... x) { return other / function(x...); });
+        return Function([function_ptr = function._function, other](auto... x) { return other / (*function_ptr)(x...); });
     }
 
     /* -------------------------------------------------------------------------- */
