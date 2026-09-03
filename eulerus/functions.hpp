@@ -3,6 +3,7 @@
 #include <cmath>
 #include <complex>
 #include <numbers>
+#include <optional>
 #include <type_traits>
 #include <utility>
 
@@ -21,21 +22,33 @@ namespace eulerus::functions {
         public:
             using FunctionType = Func;
 
+            // Default constructor that creates an empty function object
+            Function() : _function(std::nullopt) {}
+
             // Construct a function object using a base function
             Function(Func f) : _function(std::move(f)) {}
+
+            // Copy constructor that creates a new function object with the same internal function implementation as `other`
+            Function(const Function& other) : _function(other._function) {}         
+
+            // Copy assignment that reconstructs the internal function from `other`
+            Function& operator=(const Function& other) {
+                _function.emplace(*other._function);
+                return *this;
+            }
 
             // Call the internal function implementation
             template<typename... Args>
             requires ((requires { typename Args::FunctionType; } == false) && ...) // Ensure `Function` objects are not accepted as arguments
             auto operator()(Args... args) const {
-                return _function(args...);
+                return (*_function)(args...);
             }
 
             // Compose the function with other functions
             template<typename... Funcs>
             requires (requires { typename Funcs::FunctionType; } || ...) // Ensure at least one argument is a `Function` object
             auto operator()(const Funcs&... inner_functions) const {
-                auto outer_function = this->_function;
+                auto outer_function = *(this->_function);
 
                 auto f = [outer_function, inner_functions...](auto... args) { 
                     // Helper function to separate handling of constant arguments from function arguments 
@@ -54,7 +67,7 @@ namespace eulerus::functions {
             }
 
         private:
-            Func _function;
+            std::optional<Func> _function;
     };
 
     // Add two functions
