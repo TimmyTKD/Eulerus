@@ -37,6 +37,7 @@ namespace eulerus::functions {
                 return *this;
             }
 
+            // Return an immutable reference to the internal function implementation
             const Func operator~() const { 
                 if (!_function) throw std::runtime_error("Function is undefined");
                 return *_function; 
@@ -57,6 +58,7 @@ namespace eulerus::functions {
                 if (!_function) throw std::runtime_error("Function is undefined");
                 auto outer_function = *(this->_function);
 
+                // Helper function to ensure inner functions pass their internal function implementation rather than the Function object itself
                 auto capture_value = [](auto inner_function) {
                     if constexpr (requires { typename decltype(inner_function)::FunctionType; }) {
                         return ~inner_function;
@@ -82,7 +84,7 @@ namespace eulerus::functions {
             }
 
         private:
-            std::optional<Func> _function;
+            std::optional<const Func> _function;
     };
 
     // Add two functions
