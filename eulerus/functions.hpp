@@ -58,26 +58,17 @@ namespace eulerus::functions {
                 if (!_function) throw std::runtime_error("Function is undefined");
                 auto outer_function = *(this->_function);
 
-                // Helper function to ensure inner functions pass their internal function implementation rather than the Function object itself
+                // Helper function to ensure all values passed to the outer function are invocable
                 auto capture_value = [](auto inner_function) {
                     if constexpr (requires { typename decltype(inner_function)::FunctionType; }) {
                         return ~inner_function;
                     } else {
-                        return inner_function;
+                        return [value = std::move(inner_function)](auto...) { return value; };
                     }
                 };
 
-                auto f = [outer_function, ...inner_functions = capture_value(inner_functions)](auto... args) { 
-                    // Helper function to separate handling of constant arguments from function arguments 
-                    auto argument_value = [&args...](auto& inner_function) {
-                        if constexpr (std::is_invocable_v<decltype(inner_function), decltype(args)...>) {
-                            return inner_function(args...);
-                        } else {
-                            return inner_function;
-                        }
-                    };
-
-                    return outer_function(argument_value(inner_functions)...); 
+                auto f = [outer_function, ...inner_functions = capture_value(inner_functions)](auto... args) {
+                    return outer_function(inner_functions(args)...); 
                 };
 
                 return Function<decltype(f)>(std::move(f));
