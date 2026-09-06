@@ -1,9 +1,9 @@
 #pragma once
 
+#include <any>
 #include <cmath>
 #include <complex>
 #include <numbers>
-#include <optional>
 #include <type_traits>
 #include <utility>
 
@@ -11,6 +11,31 @@ namespace eulerus::functions {
     /* -------------------------------------------------------------------------- */
     /*                           Function Wrapper Class                           */
     /* -------------------------------------------------------------------------- */
+
+    // Helper struct that wraps a function and allows for nullable assignment
+    template <typename Func>
+    struct NullableFunction {
+        NullableFunction() = default;
+        NullableFunction(Func func) : _function(func), assigned(true) {}
+
+        void update(Func func) {
+            _function = func;
+            assigned = true;
+        }
+
+        const Func value() const { 
+            if (!assigned) {
+                throw std::runtime_error("Function is undefined");
+            }
+            else {
+                return std::any_cast<Func>(_function); 
+            }
+        }
+
+        private: 
+            std::any _function;
+            bool assigned = false;
+    };
 
     /**
     * @brief Generic function class that acts as a wrapper of some invocable function
@@ -23,7 +48,7 @@ namespace eulerus::functions {
             using FunctionType = Func;
 
             // Default constructor that creates an empty function object
-            Function() : _function(std::nullopt) {}
+            Function() : _function() {}
 
             // Construct a function object using a base function
             Function(Func f) : _function(std::move(f)) {}
@@ -33,30 +58,27 @@ namespace eulerus::functions {
 
             // Copy assignment that reconstructs the internal function from `other`
             Function& operator=(const Function& other) {
-                _function.emplace(~other);
+                _function.update(~other);
                 return *this;
             }
 
             // Return an immutable reference to the internal function implementation
             const Func operator~() const { 
-                if (!_function) throw std::runtime_error("Function is undefined");
-                return *_function; 
+                return _function.value(); 
             }
 
             // Call the internal function implementation
             template<typename... Args>
             requires ((requires { typename Args::FunctionType; } == false) && ...) // Ensure `Function` objects are not accepted as arguments
             auto operator()(Args... args) const {
-                if (!_function) throw std::runtime_error("Function is undefined");
-                return (*_function)(args...);
+                return (_function.value())(args...);
             }
 
             // Compose the function with other functions
             template<typename... Funcs>
             requires (requires { typename Funcs::FunctionType; } || ...) // Ensure at least one argument is a `Function` object
             auto operator()(const Funcs&... inner_functions) const {
-                if (!_function) throw std::runtime_error("Function is undefined");
-                auto outer_function = *(this->_function);
+                auto outer_function = (this->_function).value();
 
                 // Helper function to ensure all values passed to the outer function are invocable
                 auto capture_value = [](auto inner_function) {
@@ -75,7 +97,7 @@ namespace eulerus::functions {
             }
 
         private:
-            std::optional<const Func> _function;
+            NullableFunction<Func> _function;
     };
 
     // Add two functions
