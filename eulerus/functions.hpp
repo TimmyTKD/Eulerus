@@ -21,9 +21,6 @@ namespace eulerus::functions {
         public:
             using FunctionType = Func;
 
-            // Default constructor that creates an empty function object
-            Function() = default;
-
             // Construct a function object using a base function
             Function(Func f) : _function(std::move(f)) {}
 
