@@ -1,6 +1,5 @@
 #pragma once
 
-#include <any>
 #include <cmath>
 #include <complex>
 #include <numbers>
@@ -28,35 +27,23 @@ namespace eulerus::functions {
             // Construct a function object using a base function
             Function(Func f) : _function(std::move(f)) {}
 
-            // Copy constructor that creates a new function object with the same internal function implementation as `other`
-            Function(const Function& other) : _function(~other) {}         
-
-            // Copy assignment that reconstructs the internal function from `other`
-            Function& operator=(const Function& other) {
-                _function = ~other;
-                return *this;
-            }
-
             // Return an immutable reference to the internal function implementation
-            const Func operator~() const { 
-                if (!_function.has_value()) throw std::runtime_error("Function is undefined");
-                return std::any_cast<Func>(_function); 
+            const Func& operator~() const { 
+                return _function;
             }
 
             // Call the internal function implementation
             template<typename... Args>
             requires ((requires { typename Args::FunctionType; } == false) && ...) // Ensure `Function` objects are not accepted as arguments
             auto operator()(Args... args) const {
-                if (!_function.has_value()) throw std::runtime_error("Function is undefined");
-                return (std::any_cast<Func>(_function))(args...);
+                return _function(args...);
             }
 
             // Compose the function with other functions
             template<typename... Funcs>
             requires (requires { typename Funcs::FunctionType; } || ...) // Ensure at least one argument is a `Function` object
             auto operator()(const Funcs&... inner_functions) const {
-                if (!_function.has_value()) throw std::runtime_error("Function is undefined");
-                auto outer_function = std::any_cast<Func>(_function);
+                auto& outer_function = this->_function;
 
                 // Helper function to ensure all values passed to the outer function are invocable
                 auto capture_value = [](auto inner_function) {
@@ -75,7 +62,7 @@ namespace eulerus::functions {
             }
 
         private:
-            std::any _function;
+            const Func _function;
     };
 
     // Add two functions
