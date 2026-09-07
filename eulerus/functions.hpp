@@ -12,31 +12,6 @@ namespace eulerus::functions {
     /*                           Function Wrapper Class                           */
     /* -------------------------------------------------------------------------- */
 
-    // Helper struct that wraps a function and allows for nullable assignment
-    template <typename Func>
-    struct NullableFunction {
-        NullableFunction() = default;
-        NullableFunction(Func func) : _function(func), assigned(true) {}
-
-        void update(Func func) {
-            _function = func;
-            assigned = true;
-        }
-
-        const Func value() const { 
-            if (!assigned) {
-                throw std::runtime_error("Function is undefined");
-            }
-            else {
-                return std::any_cast<Func>(_function); 
-            }
-        }
-
-        private: 
-            std::any _function;
-            bool assigned = false;
-    };
-
     /**
     * @brief Generic function class that acts as a wrapper of some invocable function
     * 
@@ -48,37 +23,40 @@ namespace eulerus::functions {
             using FunctionType = Func;
 
             // Default constructor that creates an empty function object
-            Function() : _function() {}
+            Function() = default;
 
             // Construct a function object using a base function
             Function(Func f) : _function(std::move(f)) {}
 
             // Copy constructor that creates a new function object with the same internal function implementation as `other`
-            Function(const Function& other) : _function(other._function) {}         
+            Function(const Function& other) : _function(~other) {}         
 
             // Copy assignment that reconstructs the internal function from `other`
             Function& operator=(const Function& other) {
-                _function.update(~other);
+                _function = ~other;
                 return *this;
             }
 
             // Return an immutable reference to the internal function implementation
             const Func operator~() const { 
-                return _function.value(); 
+                if (!_function.has_value()) throw std::runtime_error("Function is undefined");
+                return std::any_cast<Func>(_function); 
             }
 
             // Call the internal function implementation
             template<typename... Args>
             requires ((requires { typename Args::FunctionType; } == false) && ...) // Ensure `Function` objects are not accepted as arguments
             auto operator()(Args... args) const {
-                return (_function.value())(args...);
+                if (!_function.has_value()) throw std::runtime_error("Function is undefined");
+                return (std::any_cast<Func>(_function))(args...);
             }
 
             // Compose the function with other functions
             template<typename... Funcs>
             requires (requires { typename Funcs::FunctionType; } || ...) // Ensure at least one argument is a `Function` object
             auto operator()(const Funcs&... inner_functions) const {
-                auto outer_function = (this->_function).value();
+                if (!_function.has_value()) throw std::runtime_error("Function is undefined");
+                auto outer_function = std::any_cast<Func>(_function);
 
                 // Helper function to ensure all values passed to the outer function are invocable
                 auto capture_value = [](auto inner_function) {
@@ -97,7 +75,7 @@ namespace eulerus::functions {
             }
 
         private:
-            NullableFunction<Func> _function;
+            std::any _function;
     };
 
     // Add two functions
