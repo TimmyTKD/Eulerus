@@ -1,6 +1,8 @@
 #pragma once
 
+#include <any>
 #include <cassert>
+#include <unordered_set>
 
 namespace eulerus::combinatorics {
     /* -------------------------------------------------------------------------- */
@@ -58,4 +60,47 @@ namespace eulerus::combinatorics {
 
         return result;
     }
+
+    /* -------------------------------------------------------------------------- */
+    /*                                    Sets                                    */
+    /* -------------------------------------------------------------------------- */
+
+    /**
+     * @brief Mathematical set class that can hold elements of different types
+     * 
+     */
+    class Set {
+        public:
+            // Construct an empty set
+            Set() = default;
+
+            // Construct a set with elements of different types
+            template <typename... Types>
+            Set(Types... args) : _elements{args...} {}  
+
+            // Return the union of this set and another set
+            Set merge(const Set& other) const {
+                Set result = *this;
+                result._elements.insert(other._elements.begin(), other._elements.end());
+                return result;
+            }
+
+            // Return the intersection of this set and another set
+            Set intersect(const Set& other) const {
+                Set result;
+
+                for (const auto& element : _elements) {
+                    if (other._elements.contains(element)) {
+                        result._elements.insert(element);
+                    }
+                }
+
+                return result;
+            }
+
+        private:
+            std::unordered_set<std::any> _elements;
+    };
+
+    
 }
