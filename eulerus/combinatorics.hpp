@@ -148,6 +148,38 @@ namespace eulerus::combinatorics {
                 return result;
             }
 
+            // Return the difference of this set and another set
+            Set difference(const Set& other) const {
+                Set result;
+
+                for (const auto& element : _elements) {
+                    if (!other._elements.contains(element)) {
+                        result._elements.insert(element);
+                    }
+                }
+
+                return result;
+            }
+
+            // Return the symmetric difference of this set and another set
+            Set symmetric_difference(const Set& other) const {
+                Set result;
+
+                for (const auto& element : _elements) {
+                    if (!other._elements.contains(element)) {
+                        result._elements.insert(element);
+                    }
+                }
+
+                for (const auto& element : other._elements) {
+                    if (!_elements.contains(element)) {
+                        result._elements.insert(element);
+                    }
+                }
+
+                return result;
+            }
+
         private:
             std::unordered_set<SetElement, SetElement::Hash> _elements;
     };
