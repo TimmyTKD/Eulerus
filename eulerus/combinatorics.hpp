@@ -3,7 +3,6 @@
 #include <any>
 #include <cassert>
 #include <cstddef>
-#include <cstring>
 #include <functional>
 #include <typeindex>
 #include <unordered_set>
@@ -104,10 +103,7 @@ namespace eulerus::combinatorics {
         };
     };
 
-    /**
-     * @brief Mathematical set class that can hold elements of different types
-     * 
-     */
+    // Mathematical set class that can hold elements of different types
     class Set {
         public:
             // Construct an empty set
