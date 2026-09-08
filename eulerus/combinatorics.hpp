@@ -2,6 +2,10 @@
 
 #include <any>
 #include <cassert>
+#include <cstddef>
+#include <cstring>
+#include <functional>
+#include <typeindex>
 #include <unordered_set>
 
 namespace eulerus::combinatorics {
@@ -65,6 +69,41 @@ namespace eulerus::combinatorics {
     /*                                    Sets                                    */
     /* -------------------------------------------------------------------------- */
 
+    // Helper struct to store elements of different types in a set
+    struct SetElement {
+        std::any value;
+        std::type_index type_idx;
+        bool (*equality_func)(const std::any& a, const std::any& b);
+        std::size_t hash;
+
+        // Construct a SetElement from a value of any type
+        template <typename T>
+        SetElement(const T& val) : value(val), type_idx(typeid(T)) {
+            equality_func = [](const std::any& a, const std::any& b) {
+                return std::any_cast<T>(a) == std::any_cast<T>(b);
+            };
+
+            hash = std::hash<T>{}(val);
+        }
+
+        // Check if two elements are equal based on their type and value
+        bool operator==(const SetElement& other) const {
+            if (type_idx != other.type_idx) return false;
+            return equality_func(value, other.value);
+        }
+
+        // Custom hash implementation for SetElement, so it can be used in unordered_set
+        struct Hash
+        {
+            std::size_t operator()(const SetElement& element) const
+            {
+                std::size_t h1 = element.type_idx.hash_code();
+                std::size_t h2 = element.hash;            
+                return h1 ^ (h2 << 1);
+            }
+        };
+    };
+
     /**
      * @brief Mathematical set class that can hold elements of different types
      * 
@@ -76,7 +115,18 @@ namespace eulerus::combinatorics {
 
             // Construct a set with elements of different types
             template <typename... Types>
-            Set(Types... args) : _elements{args...} {}  
+            Set(Types... args) : _elements{SetElement(args)...} {}  
+
+            // Return the number of elements in the set
+            std::size_t size() const {
+                return _elements.size();
+            }
+
+            // Check if the set contains a specific element
+            template <typename T>
+            bool contains(const T& element) const {
+                return _elements.contains(SetElement(element));
+            }
 
             // Return the union of this set and another set
             Set merge(const Set& other) const {
@@ -99,8 +149,6 @@ namespace eulerus::combinatorics {
             }
 
         private:
-            std::unordered_set<std::any> _elements;
+            std::unordered_set<SetElement, SetElement::Hash> _elements;
     };
-
-    
 }
