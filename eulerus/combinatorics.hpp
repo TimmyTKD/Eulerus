@@ -176,14 +176,14 @@ namespace eulerus::combinatorics {
                 return result;
             }
 
-            // Intersection operator overload
+            // Union operator overload
             Set operator&(const Set& other) const {
-                return intersect(other);
+                return merge(other);
             }
 
-            // Union operator overload
+            // Intersection operator overload
             Set operator|(const Set& other) const {
-                return merge(other);
+                return intersect(other);
             }
 
             // Set difference operator overload
