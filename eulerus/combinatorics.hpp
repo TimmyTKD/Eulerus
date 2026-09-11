@@ -191,6 +191,11 @@ namespace eulerus::combinatorics {
                 return difference(other);
             }
 
+            // Symmetric difference operator overload
+            Set operator^(const Set& other) const {
+                return symmetric_difference(other);
+            }
+
         private:
             std::unordered_set<SetElement, SetElement::Hash> _elements;
     };
