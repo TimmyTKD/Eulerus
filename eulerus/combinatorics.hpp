@@ -177,12 +177,12 @@ namespace eulerus::combinatorics {
             }
 
             // Union operator overload
-            Set operator&(const Set& other) const {
+            Set operator|(const Set& other) const {
                 return merge(other);
             }
 
             // Intersection operator overload
-            Set operator|(const Set& other) const {
+            Set operator&(const Set& other) const {
                 return intersect(other);
             }
 
