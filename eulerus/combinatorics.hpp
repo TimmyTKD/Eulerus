@@ -124,7 +124,7 @@ namespace eulerus::combinatorics {
                 return _elements.contains(SetElement(element));
             }
 
-            bool subset_of(Set set) {
+            bool subset_of(const Set& set) const {
                 bool missing = false;
 
                 for (const auto& element : _elements) {
@@ -137,7 +137,7 @@ namespace eulerus::combinatorics {
                 return !missing;
             }
 
-            bool superset_of(Set set) {
+            bool superset_of(const Set& set) const {
                 return set.subset_of(*this);
             }
 
