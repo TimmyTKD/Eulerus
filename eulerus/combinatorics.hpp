@@ -137,6 +137,10 @@ namespace eulerus::combinatorics {
                 return !missing;
             }
 
+            bool superset_of(Set set) {
+                return set.subset_of(*this);
+            }
+
             // Return the union of this set and another set
             Set merge(const Set& other) const {
                 Set result = *this;
