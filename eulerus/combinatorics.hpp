@@ -124,6 +124,19 @@ namespace eulerus::combinatorics {
                 return _elements.contains(SetElement(element));
             }
 
+            bool subset_of(Set set) {
+                bool missing = false;
+
+                for (const auto& element : _elements) {
+                    if (!set.contains(element)) {
+                        missing = true;
+                        break;
+                    }
+                }
+
+                return !missing;
+            }
+
             // Return the union of this set and another set
             Set merge(const Set& other) const {
                 Set result = *this;
