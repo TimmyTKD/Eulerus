@@ -201,39 +201,25 @@ namespace eulerus::combinatorics {
             }
 
             // Union operator overload
-            Set operator|(const Set& other) const {
-                return merge(other);
-            }
+            Set operator|(const Set& other) const { return merge(other); }
 
             // Intersection operator overload
-            Set operator&(const Set& other) const {
-                return intersect(other);
-            }
+            Set operator&(const Set& other) const { return intersect(other); }
 
             // Set difference operator overload
-            Set operator/(const Set& other) const {
-                return difference(other);
-            }
+            Set operator/(const Set& other) const { return difference(other); }
 
             // Symmetric difference operator overload
-            Set operator^(const Set& other) const {
-                return symmetric_difference(other);
-            }
+            Set operator^(const Set& other) const { return symmetric_difference(other); }
 
             // Set equality operator overload
-            bool operator==(const Set& other) const {
-                return equal_to(other);
-            }
+            bool operator==(const Set& other) const { return equal_to(other); }
 
             // Subset operator overload
-            bool operator<(const Set& other) const {
-                return subset_of(other);
-            }
+            bool operator<(const Set& other) const { return subset_of(other); }
 
             // Superset operator overload
-            bool operator>(const Set& other) const {
-                return superset_of(other);
-            }
+            bool operator>(const Set& other) const { return superset_of(other); }
 
         private:
             std::unordered_set<SetElement, SetElement::Hash> _elements;
