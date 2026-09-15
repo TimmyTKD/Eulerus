@@ -125,11 +125,11 @@ namespace eulerus::combinatorics {
             }
 
             // Check if the set is a subset of another set
-            bool subset_of(const Set& set) const {
+            bool subset_of(const Set& other) const {
                 bool missing = false;
 
                 for (const auto& element : _elements) {
-                    if (!set.contains(element)) {
+                    if (!other.contains(element)) {
                         missing = true;
                         break;
                     }
@@ -139,8 +139,8 @@ namespace eulerus::combinatorics {
             }
 
             // Check if the set is a superset of another set
-            bool superset_of(const Set& set) const {
-                return set.subset_of(*this);
+            bool superset_of(const Set& other) const {
+                return other.subset_of(*this);
             }
 
             // Return the union of this set and another set
