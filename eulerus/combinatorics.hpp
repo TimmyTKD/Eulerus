@@ -124,6 +124,11 @@ namespace eulerus::combinatorics {
                 return _elements.contains(SetElement(element));
             }
 
+            // Check if the set is equal to another set
+            bool equal_to(const Set& other) const {
+                return _elements == other._elements;
+            }
+
             // Check if the set is a subset of another set
             bool subset_of(const Set& other) const {
                 bool missing = false;
@@ -213,6 +218,11 @@ namespace eulerus::combinatorics {
             // Symmetric difference operator overload
             Set operator^(const Set& other) const {
                 return symmetric_difference(other);
+            }
+
+            // Set equality operator overload
+            bool operator==(const Set& other) const {
+                return equal_to(other);
             }
 
             // Subset operator overload
