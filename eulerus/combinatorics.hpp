@@ -216,12 +216,12 @@ namespace eulerus::combinatorics {
             }
 
             // Subset operator overload
-            bool operator<(const Set& other) {
+            bool operator<(const Set& other) const {
                 return subset_of(other);
             }
 
             // Superset operator overload
-            bool operator>(const Set& other) {
+            bool operator>(const Set& other) const {
                 return superset_of(other);
             }
 
