@@ -215,7 +215,15 @@ namespace eulerus::combinatorics {
                 return symmetric_difference(other);
             }
 
-            // > and < for sup/super
+            // Subset operator overload
+            bool operator<(const Set& other) {
+                return subset_of(other);
+            }
+
+            // Superset operator overload
+            bool operator>(const Set& other) {
+                return superset_of(other);
+            }
 
         private:
             std::unordered_set<SetElement, SetElement::Hash> _elements;
