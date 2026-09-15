@@ -124,6 +124,7 @@ namespace eulerus::combinatorics {
                 return _elements.contains(SetElement(element));
             }
 
+            // Check if the set is a subset of another set
             bool subset_of(const Set& set) const {
                 bool missing = false;
 
@@ -137,6 +138,7 @@ namespace eulerus::combinatorics {
                 return !missing;
             }
 
+            // Check if the set is a superset of another set
             bool superset_of(const Set& set) const {
                 return set.subset_of(*this);
             }
@@ -212,6 +214,8 @@ namespace eulerus::combinatorics {
             Set operator^(const Set& other) const {
                 return symmetric_difference(other);
             }
+
+            // > and < for sup/super
 
         private:
             std::unordered_set<SetElement, SetElement::Hash> _elements;
