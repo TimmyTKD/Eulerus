@@ -123,7 +123,7 @@ namespace eulerus::combinatorics {
 
             // Check if the set contains a specific element
             template <typename T>
-            bool contains(const T& element) const {
+            bool contains(T element) const {
                 return _elements.contains(SetElement(element));
             }
 
