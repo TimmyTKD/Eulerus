@@ -2,8 +2,10 @@
 
 #include <any>
 #include <cassert>
+#include <concepts>
 #include <cstddef>
 #include <functional>
+#include <type_traits>
 #include <typeindex>
 #include <unordered_set>
 
@@ -77,6 +79,7 @@ namespace eulerus::combinatorics {
 
         // Construct a SetElement from a value of any type
         template <typename T>
+        requires requires (T a, T b) { std::hash<T>{}(a); {a == b} -> std::same_as<bool>; }
         SetElement(const T& val) : value(val), type_idx(typeid(T)) {
             equality_func = [](const std::any& a, const std::any& b) {
                 return std::any_cast<T>(a) == std::any_cast<T>(b);
