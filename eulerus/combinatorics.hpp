@@ -5,6 +5,7 @@
 #include <concepts>
 #include <cstddef>
 #include <functional>
+#include <iostream>
 #include <typeindex>
 #include <unordered_set>
 
@@ -74,6 +75,7 @@ namespace eulerus::combinatorics {
         std::any value;
         std::type_index type_idx;
         bool (*equality_func)(const std::any& a, const std::any& b);
+        void (*output_func)(std::ostream& os, const std::any& element);
         std::size_t hash;
 
         // Construct a SetElement from a value of any type
@@ -84,7 +86,17 @@ namespace eulerus::combinatorics {
                 return std::any_cast<T>(a) == std::any_cast<T>(b);
             };
 
+            output_func = [](std::ostream& os, const std::any& element) {
+                os << std::any_cast<T>(element);
+            };
+
             hash = std::hash<T>{}(val);
+        }
+
+        // Output the element to an io stream
+        friend std::ostream& operator<<(std::ostream& os, const SetElement& element) {
+            element.output_func(os, element.value);
+            return os;
         }
 
         // Check if two elements are equal based on their type and value
@@ -114,6 +126,19 @@ namespace eulerus::combinatorics {
             // Construct a set with elements of different types
             template <typename... Types>
             Set(Types... args) : _elements{SetElement(args)...} {}  
+
+            // Output the set to an io stream
+            friend std::ostream& operator<<(std::ostream& os, const Set& set) {
+                os << "{";
+                
+                for (const auto& element : set._elements) {
+                    if (element != *set._elements.begin()) os << ", ";
+                    os << element;
+                }
+                
+                os << "}";
+                return os;
+            }
 
             // Return the number of elements in the set
             std::size_t size() const {
