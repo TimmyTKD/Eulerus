@@ -140,6 +140,12 @@ namespace eulerus::combinatorics {
                 return os;
             }
 
+            // Return an iterator pointing to the first element in the set
+            auto begin() const { return _elements.begin(); }
+
+            // Return an iterator pointing to the last element in the set
+            auto end() const { return _elements.end(); }
+
             // Return the number of elements in the set
             std::size_t size() const {
                 return _elements.size();
