@@ -258,3 +258,22 @@ namespace eulerus::combinatorics {
             std::unordered_set<SetElement, SetElement::Hash> _elements;
     };
 }
+
+
+// Custom specialization of std::hash for Set class
+template<>
+struct std::hash<eulerus::combinatorics::Set>
+{
+    std::size_t operator()(const eulerus::combinatorics::Set& set) const
+    {
+        std::size_t hash = typeid(eulerus::combinatorics::Set).hash_code();
+
+        // Hash each element in the set, using the same method as the boost library's hash_combine function
+        for (const auto& element : set) {
+            auto hasher = eulerus::combinatorics::SetElement::Hash();
+            hash ^= hasher(element) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+        }
+
+        return hash;
+    }
+};
