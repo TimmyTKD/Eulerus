@@ -74,6 +74,24 @@ namespace eulerus::linear_algebra {
                 return os;
             }
 
+            // Check if the matrix is equal to another matrix
+            bool operator==(Matrix other) const {
+                bool equal = true;
+
+                for (std::size_t i = 0; i < Rows; i++) {
+                    for (std::size_t j = 0; j < Columns; j++) {
+                        if (values[i][j] != other[i][j]) {
+                            equal = false;
+                            break;
+                        }
+                    }
+
+                    if (equal == false) break;
+                }
+
+                return equal;
+            }
+
             // Cast the matrix's values to a compatible type
             template <typename T2>
             requires (std::is_convertible_v<T, T2>)
