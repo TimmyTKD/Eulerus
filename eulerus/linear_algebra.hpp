@@ -426,3 +426,39 @@ namespace eulerus::linear_algebra {
         return Vector<Rows, Result>(matrix * converted);
     }
 }
+
+// Custom specialization of std::hash for Matrix class
+template<std::size_t Rows, std::size_t Columns, typename T>
+struct std::hash<eulerus::linear_algebra::Matrix<Rows, Columns, T>>
+{
+    std::size_t operator()(const eulerus::linear_algebra::Matrix<Rows, Columns, T>& matrix) const
+    {
+        std::size_t hash = typeid(eulerus::linear_algebra::Matrix<Rows, Columns, T>).hash_code();
+
+        // Hash each value in the matrix, using the same method as the boost library's hash_combine function
+        for (std::size_t i = 0; i < Rows; i++) {
+            for (std::size_t j = 0; j < Columns; j++) {
+                hash ^= std::hash<T>{}(matrix[i][j]) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+            }
+        }
+
+        return hash;
+    }
+};
+
+// Custom specialization of std::hash for Vector class
+template<std::size_t Dimension, typename T>
+struct std::hash<eulerus::linear_algebra::Vector<Dimension, T>>
+{
+    std::size_t operator()(const eulerus::linear_algebra::Vector<Dimension, T>& vector) const
+    {
+        std::size_t hash = typeid(eulerus::linear_algebra::Vector<Dimension, T>).hash_code();
+
+        // Hash each value in the vector, using the same method as the boost library's hash_combine function
+        for (std::size_t i = 0; i < Dimension; i++) {
+            hash ^= std::hash<T>{}(vector[i]) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+        }
+
+        return hash;
+    }
+};
