@@ -297,3 +297,22 @@ struct std::hash<eulerus::combinatorics::Set>
         return hash;
     }
 };
+
+// Custom specialization of std::hash for std::pair of SetElement class
+template<>
+struct std::hash<std::pair<eulerus::combinatorics::SetElement, eulerus::combinatorics::SetElement>>
+{
+    using element_pair = std::pair<eulerus::combinatorics::SetElement, eulerus::combinatorics::SetElement>;
+
+    std::size_t operator()(const element_pair& pair) const
+    {
+        std::size_t hash = typeid(element_pair).hash_code();
+
+        // Hash each item in the pair, using the same method as the boost library's hash_combine function
+        auto hasher = eulerus::combinatorics::SetElement::Hash();
+        hash ^= hasher(pair.first) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+        hash ^= hasher(pair.second) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+
+        return hash;
+    }
+};
