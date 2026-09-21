@@ -8,6 +8,7 @@
 #include <iostream>
 #include <typeindex>
 #include <unordered_set>
+#include <utility>
 
 namespace eulerus::combinatorics {
     /* -------------------------------------------------------------------------- */
@@ -263,8 +264,21 @@ namespace eulerus::combinatorics {
         private:
             std::unordered_set<SetElement, SetElement::Hash> _elements;
     };
-}
 
+    // Return the cartesian product of two sets
+    inline Set cartesian_product(Set A, Set B) {
+        Set result;
+
+        for (const auto& a : A) {
+            for (const auto& b : B) {
+                auto pair = std::make_pair(a, b);
+                result = result.merge(Set{pair});
+            }
+        }
+
+        return result;
+    } 
+}
 
 // Custom specialization of std::hash for Set class
 template<>
