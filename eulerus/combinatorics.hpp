@@ -76,7 +76,7 @@ namespace eulerus::combinatorics {
         std::any value;
         std::type_index type_idx;
         bool (*equality_func)(const std::any& a, const std::any& b);
-        void (*output_func)(std::ostream& os, const std::any& element);
+        void (*output_func)(std::ostream& os, const std::any& element_value);
         std::size_t hash;
 
         // Construct a SetElement from a value of any type
@@ -87,8 +87,8 @@ namespace eulerus::combinatorics {
                 return std::any_cast<T>(a) == std::any_cast<T>(b);
             };
 
-            output_func = [](std::ostream& os, const std::any& element) {
-                os << std::any_cast<T>(element);
+            output_func = [](std::ostream& os, const std::any& element_value) {
+                os << std::any_cast<T>(element_value);
             };
 
             hash = std::hash<T>{}(val);
