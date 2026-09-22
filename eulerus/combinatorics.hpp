@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <functional>
 #include <iostream>
+#include <iterator>
 #include <typeindex>
 #include <unordered_set>
 #include <utility>
@@ -126,7 +127,16 @@ namespace eulerus::combinatorics {
 
             // Construct a set with elements of different types
             template <typename... Types>
-            Set(Types... args) : _elements{SetElement(args)...} {}  
+            Set(Types... args) : _elements{SetElement(args)...} {} 
+            
+            // Construct a set from an iterable collection
+            template <typename Iterable>
+            requires requires (Iterable collection) { std::size(collection); std::begin(collection); std::end(collection); } 
+            static Set from_iterable(Iterable collection) {
+                Set set;
+                set._elements.insert(std::begin(collection), std::end(collection));
+                return set;
+            }
 
             // Output the set to an io stream
             friend std::ostream& operator<<(std::ostream& os, const Set& set) {
