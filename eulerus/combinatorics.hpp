@@ -9,7 +9,6 @@
 #include <iterator>
 #include <typeindex>
 #include <unordered_set>
-#include <utility>
 
 namespace eulerus::combinatorics {
     /* -------------------------------------------------------------------------- */
