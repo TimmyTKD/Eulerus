@@ -119,6 +119,27 @@ namespace eulerus::combinatorics {
         };
     };
 
+    // Helper struct to store an orderd pair of SetElements
+    struct SetElementPair {
+        SetElement first;
+        SetElement second;
+
+        // Construct a SetElementPair from any two objects
+        template <typename T1, typename T2>
+        SetElementPair(T1 a, T2 b) : first(a), second(b) {}
+
+        // Output the pair to an io stream
+        friend std::ostream& operator<<(std::ostream& os, const SetElementPair& pair) {
+            os << "(" << pair.first << ", " << pair.second << ")";
+            return os;
+        }
+
+        // Check if two pairs are equal based on the equality of both items
+        bool operator==(SetElementPair other) {
+            return first == other.first && second == other.second;
+        }
+    };
+
     // Mathematical set class that can hold elements of different types
     class Set {
         public:
@@ -281,7 +302,7 @@ namespace eulerus::combinatorics {
 
         for (const auto& a : A) {
             for (const auto& b : B) {
-                auto pair = std::make_pair(a, b);
+                SetElementPair pair = SetElementPair(a, b);
                 result = result.merge(Set{pair});
             }
         }
@@ -308,15 +329,13 @@ struct std::hash<eulerus::combinatorics::Set>
     }
 };
 
-// Custom specialization of std::hash for std::pair of SetElement class
+// Custom specialization of std::hash for SetElementPair struct
 template<>
-struct std::hash<std::pair<eulerus::combinatorics::SetElement, eulerus::combinatorics::SetElement>>
+struct std::hash<eulerus::combinatorics::SetElementPair>
 {
-    using element_pair = std::pair<eulerus::combinatorics::SetElement, eulerus::combinatorics::SetElement>;
-
-    std::size_t operator()(const element_pair& pair) const
+    std::size_t operator()(const eulerus::combinatorics::SetElementPair& pair) const
     {
-        std::size_t hash = typeid(element_pair).hash_code();
+        std::size_t hash = typeid(eulerus::combinatorics::SetElementPair).hash_code();
 
         // Hash each item in the pair, using the same method as the boost library's hash_combine function
         auto hasher = eulerus::combinatorics::SetElement::Hash();
