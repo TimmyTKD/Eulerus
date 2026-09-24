@@ -94,6 +94,19 @@ namespace eulerus::combinatorics {
             hash = std::hash<T>{}(val);
         }
 
+        // Construct a SetElement from a value of any type, using a provided hash
+        template <typename T>
+        requires requires (T a, T b) { {a == b} -> std::same_as<bool>; }
+        SetElement(const T& val, std::size_t custom_hash) : value(val), type_idx(typeid(T)), hash(custom_hash) {
+            equality_func = [](const std::any& a, const std::any& b) {
+                return std::any_cast<T>(a) == std::any_cast<T>(b);
+            };
+
+            output_func = [](std::ostream& os, const std::any& element_value) {
+                os << std::any_cast<T>(element_value);
+            };
+        }
+
         // Output the element to an io stream
         friend std::ostream& operator<<(std::ostream& os, const SetElement& element) {
             element.output_func(os, element.value);
