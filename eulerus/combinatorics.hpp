@@ -285,6 +285,17 @@ namespace eulerus::combinatorics {
                 return result;
             }
 
+            // Return the complement of this set with respect to some universal set
+            Set complement(const Set& universal_set) {
+                Set result = universal_set;
+
+                for (const auto& element : _elements) {
+                    result._elements.erase(element);
+                }
+
+                return result;
+            }
+
             // Union operator overload
             Set operator|(const Set& other) const { return merge(other); }
 
