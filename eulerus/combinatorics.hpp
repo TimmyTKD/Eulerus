@@ -318,16 +318,16 @@ namespace eulerus::combinatorics {
 
     // Return the cartesian product of two sets
     inline Set cartesian_product(Set A, Set B) {
-        Set result;
+        std::unordered_set<SetElement, SetElement::Hash> elements;
 
         for (const auto& a : A) {
             for (const auto& b : B) {
                 SetElementPair pair = SetElementPair(a, b);
-                result = result.merge(Set{SetElement(pair, pair.hash)});
+                elements.insert(SetElement(pair, pair.hash));
             }
         }
 
-        return result;
+        return Set::from_iterable(elements);
     } 
 }
 
