@@ -135,10 +135,18 @@ namespace eulerus::combinatorics {
     struct SetElementPair {
         SetElement first;
         SetElement second;
+        std::size_t hash;
 
         // Construct a SetElementPair from any two objects
         template <typename T1, typename T2>
-        SetElementPair(T1 a, T2 b) : first(a), second(b) {}
+        SetElementPair(T1 a, T2 b) : first(a), second(b) {
+            hash = typeid(SetElementPair).hash_code();
+
+            // Hash each item in the pair, using the same method as the boost library's hash_combine function
+            auto hasher = SetElement::Hash();
+            hash ^= hasher(first) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+            hash ^= hasher(second) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+        }
 
         // Output the pair to an io stream
         friend std::ostream& operator<<(std::ostream& os, const SetElementPair& pair) {
@@ -315,7 +323,7 @@ namespace eulerus::combinatorics {
         for (const auto& a : A) {
             for (const auto& b : B) {
                 SetElementPair pair = SetElementPair(a, b);
-                result = result.merge(Set{pair});
+                result = result.merge(Set{SetElement(pair, pair.hash)});
             }
         }
 
@@ -336,23 +344,6 @@ struct std::hash<eulerus::combinatorics::Set>
             auto hasher = eulerus::combinatorics::SetElement::Hash();
             hash ^= hasher(element) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
         }
-
-        return hash;
-    }
-};
-
-// Custom specialization of std::hash for SetElementPair struct
-template<>
-struct std::hash<eulerus::combinatorics::SetElementPair>
-{
-    std::size_t operator()(const eulerus::combinatorics::SetElementPair& pair) const
-    {
-        std::size_t hash = typeid(eulerus::combinatorics::SetElementPair).hash_code();
-
-        // Hash each item in the pair, using the same method as the boost library's hash_combine function
-        auto hasher = eulerus::combinatorics::SetElement::Hash();
-        hash ^= hasher(pair.first) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-        hash ^= hasher(pair.second) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
 
         return hash;
     }
