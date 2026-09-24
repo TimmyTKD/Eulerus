@@ -303,7 +303,7 @@ namespace eulerus::combinatorics {
             Set operator&(const Set& other) const { return intersect(other); }
 
             // Set difference operator overload
-            Set operator/(const Set& other) const { return difference(other); }
+            Set operator-(const Set& other) const { return difference(other); }
 
             // Symmetric difference operator overload
             Set operator^(const Set& other) const { return symmetric_difference(other); }
