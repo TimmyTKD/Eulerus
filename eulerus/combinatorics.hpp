@@ -296,6 +296,20 @@ namespace eulerus::combinatorics {
                 return result;
             }
 
+            // Return the cartesian product of this set and another set
+            inline Set cartesian_product(Set other) {
+                std::unordered_set<SetElement, SetElement::Hash> elements;
+
+                for (const auto& a : _elements) {
+                    for (const auto& b : other._elements) {
+                        SetElementPair pair = SetElementPair(a, b);
+                        elements.insert(SetElement(pair, pair.hash));
+                    }
+                }
+
+                return Set::from_iterable(elements);
+            }
+
             // Union operator overload
             Set operator|(const Set& other) const { return merge(other); }
 
@@ -329,17 +343,8 @@ namespace eulerus::combinatorics {
 
     // Return the cartesian product of two sets
     inline Set cartesian_product(Set A, Set B) {
-        std::unordered_set<SetElement, SetElement::Hash> elements;
-
-        for (const auto& a : A) {
-            for (const auto& b : B) {
-                SetElementPair pair = SetElementPair(a, b);
-                elements.insert(SetElement(pair, pair.hash));
-            }
-        }
-
-        return Set::from_iterable(elements);
-    } 
+        return A.cartesian_product(B);
+    }
 }
 
 // Custom specialization of std::hash for Set class
