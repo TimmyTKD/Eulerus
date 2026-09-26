@@ -297,7 +297,7 @@ namespace eulerus::combinatorics {
             }
 
             // Return the cartesian product of this set and another set
-            inline Set cartesian_product(Set other) {
+            inline Set cartesian_product(const Set& other) const {
                 std::unordered_set<SetElement, SetElement::Hash> elements;
 
                 for (const auto& a : _elements) {
@@ -342,7 +342,7 @@ namespace eulerus::combinatorics {
     };
 
     // Return the cartesian product of two sets
-    inline Set cartesian_product(Set A, Set B) {
+    inline Set cartesian_product(const Set& A, const Set& B) {
         return A.cartesian_product(B);
     }
 }
