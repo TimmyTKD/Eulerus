@@ -286,7 +286,7 @@ namespace eulerus::combinatorics {
             }
 
             // Return the complement of this set with respect to some universal set
-            Set complement(const Set& universal_set) {
+            Set complement(const Set& universal_set) const {
                 Set result = universal_set;
 
                 for (const auto& element : _elements) {
