@@ -322,6 +322,9 @@ namespace eulerus::combinatorics {
             // Symmetric difference operator overload
             Set operator^(const Set& other) const { return symmetric_difference(other); }
 
+            // Cartesian product operator overload
+            Set operator*(const Set& other) const { return cartesian_product(other); }
+
             // Set equality operator overload
             bool operator==(const Set& other) const { return equal_to(other); }
 
