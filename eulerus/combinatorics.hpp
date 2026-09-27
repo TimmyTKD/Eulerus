@@ -7,6 +7,7 @@
 #include <functional>
 #include <iostream>
 #include <iterator>
+#include <type_traits>
 #include <typeindex>
 #include <unordered_set>
 
@@ -362,9 +363,28 @@ namespace eulerus::combinatorics {
             std::unordered_set<SetElement, SetElement::Hash> _elements;
     };
 
-    // Return the cartesian product of two sets
-    inline Set cartesian_product(const Set& A, const Set& B) {
-        return A.cartesian_product(B);
+    // Return the cartesian product of several sets
+    template <std::same_as<Set>... Sets>
+    inline Set cartesian_product(const Sets&... sets) {
+        std::unordered_set<SetElement, SetElement::Hash> elements;
+        const Set* set_array[sizeof...(Sets)] = {(&sets)...};
+
+        // Recursively loop through the sets to construct ordered tuples using their elements
+        auto recursive_loop = [&set_array, &elements](auto&& recursive_loop, auto n, const auto&... items) {
+            for (const auto& element : *set_array[n.value]) {
+                if constexpr (n.value == sizeof...(Sets) - 1) {
+                    SetElementTuple<sizeof...(Sets)> tuple = SetElementTuple<sizeof...(Sets)>(items..., element);
+                    elements.insert(SetElement(tuple, tuple.hash));
+                }
+                else {
+                    recursive_loop(recursive_loop, std::integral_constant<std::size_t, n + 1>{}, items..., element);
+                }
+            }
+        };
+
+        recursive_loop(recursive_loop, std::integral_constant<std::size_t, 0>{});
+
+        return Set::from_iterable(elements);
     }
 }
 
