@@ -131,32 +131,50 @@ namespace eulerus::combinatorics {
         };
     };
 
-    // Helper struct to store an orderd pair of SetElements
-    struct SetElementPair {
-        SetElement first;
-        SetElement second;
+    // Helper struct to store an ordered tuple of SetElements
+    template <std::size_t N>
+    struct SetElementTuple {
+        SetElement items[N];
         std::size_t hash;
 
-        // Construct a SetElementPair from any two objects
-        template <typename T1, typename T2>
-        SetElementPair(T1 a, T2 b) : first(a), second(b) {
-            hash = typeid(SetElementPair).hash_code();
+        // Construct a SetElementTuple from several objects
+        template <typename... Args>
+        requires(sizeof...(Args) == N)
+        SetElementTuple(Args... args) : items(args...) {
+            hash = typeid(SetElementTuple).hash_code();
+            auto hasher = eulerus::combinatorics::SetElement::Hash();
 
-            // Hash each item in the pair, using the same method as the boost library's hash_combine function
-            auto hasher = SetElement::Hash();
-            hash ^= hasher(first) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-            hash ^= hasher(second) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+            // Hash each item in the tuple, using the same method as the boost library's hash_combine function
+            for (std::size_t i = 0; i < N; i++) {
+                hash ^= hasher(items[i]) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+            }
         }
 
-        // Output the pair to an io stream
-        friend std::ostream& operator<<(std::ostream& os, const SetElementPair& pair) {
-            os << "(" << pair.first << ", " << pair.second << ")";
+        // Output the tuple to an io stream
+        friend std::ostream& operator<<(std::ostream& os, const SetElementTuple& tuple) {
+            os << "(";
+            
+            for (std::size_t i = 0; i < N; i++) {
+                if (i != 0) os << ", ";
+                os << tuple.items[i];
+            }
+
+            os << ")";
             return os;
         }
 
-        // Check if two pairs are equal based on the equality of both items
-        bool operator==(SetElementPair other) {
-            return first == other.first && second == other.second;
+        // Check if two tuples are equal based on the equality of all items
+        bool operator==(SetElementTuple other) {
+            bool equal = true;
+
+            for (std::size_t i = 0; i < N; i++) {
+                if (items[i] != other.items[i]) {
+                    equal = false;
+                    break;
+                }
+            }
+
+            return equal;
         }
     };
 
@@ -302,7 +320,7 @@ namespace eulerus::combinatorics {
 
                 for (const auto& a : _elements) {
                     for (const auto& b : other._elements) {
-                        SetElementPair pair = SetElementPair(a, b);
+                        SetElementTuple<2> pair = SetElementTuple<2>(a, b);
                         elements.insert(SetElement(pair, pair.hash));
                     }
                 }
