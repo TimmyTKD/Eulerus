@@ -319,6 +319,9 @@ namespace eulerus::combinatorics {
             Set cartesian_product(const Set& other) const {
                 std::unordered_set<SetElement, SetElement::Hash> elements;
 
+                // Return the empty set if any of the sets are empty
+                if (this->size() == 0 || other.size() == 0) return Set{};
+
                 for (const auto& a : _elements) {
                     for (const auto& b : other._elements) {
                         SetElementTuple<2> pair = SetElementTuple<2>(a, b);
@@ -369,6 +372,11 @@ namespace eulerus::combinatorics {
     inline Set cartesian_product(const Sets&... sets) {
         std::unordered_set<SetElement, SetElement::Hash> elements;
         const Set* set_array[sizeof...(Sets)] = {(&sets)...};
+
+        // Return the empty set if any of the sets are empty
+        for (const Set* set : set_array) {
+            if (set->size() == 0) return Set{};
+        }
 
         // Recursively loop through the sets to construct ordered tuples using their elements
         auto recursive_loop = [&set_array, &elements](auto&& recursive_loop, auto n, const auto&... items) {
