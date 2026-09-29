@@ -365,6 +365,7 @@ namespace eulerus::combinatorics {
 
     // Return the cartesian product of several sets
     template <std::same_as<Set>... Sets>
+    requires(sizeof...(Sets) >= 2)
     inline Set cartesian_product(const Sets&... sets) {
         std::unordered_set<SetElement, SetElement::Hash> elements;
         const Set* set_array[sizeof...(Sets)] = {(&sets)...};
