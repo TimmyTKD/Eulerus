@@ -375,6 +375,33 @@ namespace eulerus::combinatorics {
         return Set::from_iterable(elements);
     }
 
+    // Return the intersection of several sets
+    template <std::same_as<Set>... Sets>
+    requires(sizeof...(Sets) >= 2)
+    inline Set intersect_sets(const Sets&... sets) {
+        std::unordered_set<SetElement, SetElement::Hash> elements;
+        const Set* set_array[sizeof...(Sets)] = {(&sets)...};
+
+        elements.insert(set_array[0]->begin(), set_array[0]->end());
+
+        for (const Set* set : set_array) {
+            // Return the empty set if any of the sets are empty, or if `elements` becomes empty
+            if (set->size() == 0 || elements.size() == 0) return Set{};
+
+            // Remove elements from `elements` that are not in `set`
+            auto iterator = elements.begin();
+            while (iterator != elements.end()) {
+                if (!set->contains(*iterator)) {
+                    iterator = elements.erase(iterator); 
+                } else {
+                    iterator++;
+                }
+            }
+        }
+
+        return Set::from_iterable(elements);
+    }
+
     // Return the cartesian product of several sets
     template <std::same_as<Set>... Sets>
     requires(sizeof...(Sets) >= 2)
