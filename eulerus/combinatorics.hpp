@@ -366,6 +366,15 @@ namespace eulerus::combinatorics {
             std::unordered_set<SetElement, SetElement::Hash> _elements;
     };
 
+    // Return the union of several sets
+    template <std::same_as<Set>... Sets>
+    requires(sizeof...(Sets) >= 2)
+    inline Set merge_sets(const Sets&... sets) {
+        std::unordered_set<SetElement, SetElement::Hash> elements;
+        (elements.insert(sets.begin(), sets.end()), ...);
+        return Set::from_iterable(elements);
+    }
+
     // Return the cartesian product of several sets
     template <std::same_as<Set>... Sets>
     requires(sizeof...(Sets) >= 2)
