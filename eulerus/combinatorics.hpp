@@ -74,7 +74,7 @@ namespace eulerus::combinatorics {
 
     // Helper struct to store elements of different types in a set
     struct SetElement {
-        std::any value;
+        const std::any value;
 
         // Construct a SetElement from a value of any type
         template <typename T>
@@ -141,7 +141,7 @@ namespace eulerus::combinatorics {
         };
 
         private:
-            std::type_index type_idx;
+            const std::type_index type_idx;
             bool (*equality_func)(const std::any& a, const std::any& b);
             void (*output_func)(std::ostream& os, const std::any& element_value);
             std::size_t hash;
