@@ -150,7 +150,7 @@ namespace eulerus::combinatorics {
     // Helper struct to store an ordered tuple of SetElements
     template <std::size_t N>
     struct SetElementTuple {
-        SetElement items[N];
+        const SetElement items[N];
         std::size_t hash;
 
         // Construct a SetElementTuple from several objects
