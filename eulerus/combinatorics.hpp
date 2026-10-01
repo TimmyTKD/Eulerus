@@ -116,6 +116,19 @@ namespace eulerus::combinatorics {
             return equality_func(value, other.value);
         }
 
+        // Check if the specified type matches the original type of the stored value
+        template <typename T>
+        constexpr bool is_type() const {
+            return typeid(T) == type_idx;
+        }
+
+        // Return the stored value as the specified type, only if the specified type matches the original type of the value
+        template <typename T>
+        constexpr T cast() const {
+            assert(is_type<T>());
+            return std::any_cast<T>(value);
+        }
+
         // Custom hash implementation for SetElement, so it can be used in unordered_set
         struct Hash
         {
