@@ -180,7 +180,7 @@ namespace eulerus::combinatorics {
         }
 
         // Check if two tuples are equal based on the equality of all items
-        bool operator==(SetElementTuple other) const {
+        bool operator==(const SetElementTuple& other) const {
             bool equal = true;
 
             for (std::size_t i = 0; i < N; i++) {
