@@ -2,6 +2,7 @@
 
 #include <any>
 #include <cassert>
+#include <compare>
 #include <concepts>
 #include <cstddef>
 #include <functional>
@@ -28,6 +29,10 @@ namespace eulerus::set_theory {
                 return std::any_cast<T>(a) == std::any_cast<T>(b);
             };
 
+            ordering_func = [](const std::any& a, const std::any& b) {
+                return std::any_cast<T>(a) <=> std::any_cast<T>(b);
+            };
+
             output_func = [](std::ostream& os, const std::any& element_value) {
                 os << std::any_cast<T>(element_value);
             };
@@ -41,6 +46,10 @@ namespace eulerus::set_theory {
         SetElement(const T& val, std::size_t custom_hash) : value(val), type_idx(typeid(T)), hash(custom_hash) {
             equality_func = [](const std::any& a, const std::any& b) {
                 return std::any_cast<T>(a) == std::any_cast<T>(b);
+            };
+
+            ordering_func = [](const std::any& a, const std::any& b) {
+                return std::any_cast<T>(a) <=> std::any_cast<T>(b);
             };
 
             output_func = [](std::ostream& os, const std::any& element_value) {
@@ -58,6 +67,12 @@ namespace eulerus::set_theory {
         bool operator==(const SetElement& other) const {
             if (type_idx != other.type_idx) return false;
             return equality_func(value, other.value);
+        }
+
+        // Compare two set elements based on their type and value 
+        std::strong_ordering operator<=>(const SetElement& other) const {
+            if (type_idx != other.type_idx) return type_idx <=> other.type_idx;
+            return ordering_func(value, other.value);
         }
 
         // Check if the specified type matches the original type of the stored value
@@ -87,6 +102,7 @@ namespace eulerus::set_theory {
         private:
             const std::type_index type_idx;
             bool (*equality_func)(const std::any& a, const std::any& b);
+            std::strong_ordering (*ordering_func)(const std::any& a, const std::any& b);
             void (*output_func)(std::ostream& os, const std::any& element_value);
             std::size_t hash;
     };
@@ -135,6 +151,12 @@ namespace eulerus::set_theory {
             }
 
             return equal;
+        }
+
+        // Compare two tuples based on their length
+        template <std::size_t M>
+        std::strong_ordering operator<=>(const SetElementTuple<M>&) const {
+            return N <=> M;
         }
     };
 
