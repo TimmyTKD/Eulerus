@@ -350,6 +350,9 @@ namespace eulerus::combinatorics {
             // Union operator overload
             Set operator|(const Set& other) const { return merge(other); }
 
+            // Alternative union operator overload
+            Set operator+(const Set& other) const { return merge(other); }
+
             // Intersection operator overload
             Set operator&(const Set& other) const { return intersect(other); }
 
