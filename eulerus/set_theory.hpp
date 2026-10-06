@@ -139,6 +139,12 @@ namespace eulerus::set_theory {
             return os;
         }
 
+        // Return an immutable reference to the item at `index`
+        const SetElement& operator[](std::size_t index) const {
+            assert(index >= 0 && index < N);
+            return items[index];
+        }
+
         // Check if two tuples are equal based on the equality of all items
         bool operator==(const SetElementTuple& other) const {
             bool equal = true;
