@@ -313,6 +313,21 @@ namespace eulerus::set_theory {
                 return Set::from_iterable(elements);
             }
 
+            // Return a subset containing elements that satisfy the given condition
+            template <typename Predicate>
+            requires requires(Predicate predicate, SetElement element) { {predicate(element)} -> std::same_as<bool>; }
+            Set select(Predicate condition) const {
+                Set result;
+
+                for (const auto& element : _elements) {
+                    if (condition(element)) {
+                        result._elements.insert(element);
+                    }
+                }
+
+                return result;
+            }
+
             // Union operator overload
             Set operator|(const Set& other) const { return merge(other); }
 
