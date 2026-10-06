@@ -315,7 +315,7 @@ namespace eulerus::set_theory {
 
             // Return a subset containing elements that satisfy the given condition
             template <typename Predicate>
-            requires requires(Predicate predicate, SetElement element) { {predicate(element)} -> std::same_as<bool>; }
+            requires (std::predicate<Predicate, SetElement>)
             Set select(Predicate condition) const {
                 Set result;
 
