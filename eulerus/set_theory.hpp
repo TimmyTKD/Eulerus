@@ -77,13 +77,13 @@ namespace eulerus::set_theory {
 
         // Check if the specified type matches the original type of the stored value
         template <typename T>
-        constexpr bool is_type() const {
+        bool is_type() const {
             return typeid(T) == type_idx;
         }
 
         // Return the stored value as the specified type, only if the specified type matches the original type of the value
         template <typename T>
-        constexpr T cast() const {
+        T cast() const {
             assert(is_type<T>());
             return std::any_cast<T>(value);
         }
