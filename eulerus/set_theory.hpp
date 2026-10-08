@@ -88,6 +88,12 @@ namespace eulerus::set_theory {
             return std::any_cast<T>(value);
         }
 
+        // Overload the cast operator to allow implicit casting of SetElement to the specified type
+        template <typename T>
+        operator T() const {
+            return cast<T>();
+        }
+
         // Custom hash implementation for SetElement, so it can be used in unordered_set
         struct Hash
         {
