@@ -19,6 +19,7 @@ namespace eulerus::number_theory {
     // Return the greatest common divisor of `a` and `b`
     template <std::integral T, std::integral T2>
     inline auto gcd(T a, T2 b) {
+        if (a == 0 && b == 0) return 0;
         if (a < 0) a *= -1;
         if (b < 0) b *= -1;
         if (a < b) std::swap(a, b);
@@ -30,6 +31,7 @@ namespace eulerus::number_theory {
     // Return the least common multiple of `a` and `b`
     template <std::integral T, std::integral T2>
     inline auto lcm(T a, T2 b) {
+        if (a == 0 && b == 0) return 0;
         if (a < 0) a *= -1;
         if (b < 0) b *= -1;
         return (a / gcd(a, b)) * b;
