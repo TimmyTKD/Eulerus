@@ -28,6 +28,19 @@ namespace eulerus::number_theory {
         return a;
     }
 
+    template <std::integral T>
+    inline bool is_prime(T x) {
+        if (x <= 1) return false;
+        if (x == 2 || x == 3) return true;
+        if (x % 2 == 0 || x % 3 == 0) return false;
+
+        for (T i = 5; i * i < x; i += 6) {
+            if (x % i == 0 || x % (i + 2) == 0) return false;
+        }
+
+        return true;
+    }
+
     // Return the least common multiple of `a` and `b`
     template <std::integral T, std::integral T2>
     inline auto lcm(T a, T2 b) {
