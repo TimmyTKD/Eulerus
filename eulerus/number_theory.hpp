@@ -28,6 +28,7 @@ namespace eulerus::number_theory {
         return a;
     }
 
+    // Check if `x` is a prime number
     template <std::integral T>
     inline bool is_prime(T x) {
         if (x <= 1) return false;
