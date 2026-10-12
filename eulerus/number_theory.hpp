@@ -9,16 +9,14 @@ namespace eulerus::number_theory {
     /* -------------------------------------------------------------------------- */
     
     // Return `x` modulo `m`, ensuring a non-negative result
-    template <std::integral T, std::integral T2>
-    inline T2 mod(T x, T2 m) {
-        T2 r = x % m;
+    inline auto mod(std::integral auto x, std::integral auto m) {
+        auto r = x % m;
         if ((x < 0 != m < 0) && r != 0) r += m;
         return r;
     }
 
     // Return the greatest common divisor of `a` and `b`
-    template <std::integral T, std::integral T2>
-    inline auto gcd(T a, T2 b) {
+    inline auto gcd(std::integral auto a, std::integral auto b) {
         if (a == 0 && b == 0) return 0;
         if (a < 0) a *= -1;
         if (b < 0) b *= -1;
@@ -29,13 +27,12 @@ namespace eulerus::number_theory {
     }
 
     // Check if `x` is a prime number
-    template <std::integral T>
-    inline bool is_prime(T x) {
+    inline bool is_prime(std::integral auto x) {
         if (x <= 1) return false;
         if (x == 2 || x == 3) return true;
         if (x % 2 == 0 || x % 3 == 0) return false;
 
-        for (T i = 5; i * i < x; i += 6) {
+        for (decltype(x) i = 5; i * i < x; i += 6) {
             if (x % i == 0 || x % (i + 2) == 0) return false;
         }
 
@@ -43,8 +40,7 @@ namespace eulerus::number_theory {
     }
 
     // Return the least common multiple of `a` and `b`
-    template <std::integral T, std::integral T2>
-    inline auto lcm(T a, T2 b) {
+    inline auto lcm(std::integral auto a, std::integral auto b) {
         if (a == 0 && b == 0) return 0;
         if (a < 0) a *= -1;
         if (b < 0) b *= -1;
