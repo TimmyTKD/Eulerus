@@ -340,6 +340,19 @@ namespace eulerus::set_theory {
                 return result;
             }
 
+            // Return a new set with elements transformed by the given function
+            template <typename Func>
+            requires (std::is_invocable_r_v<SetElement, Func, SetElement>)
+            Set transform(Func transformation) const {
+                Set result;
+
+                for (const auto& element : _elements) {
+                    result._elements.insert(transformation(element));
+                }
+
+                return result;
+            }
+
             // Union operator overload
             Set operator|(const Set& other) const { return merge(other); }
 
