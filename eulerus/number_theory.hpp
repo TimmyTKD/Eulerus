@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <concepts>
 #include <utility>
 
@@ -10,8 +11,11 @@ namespace eulerus::number_theory {
     
     // Return `x` modulo `m`, ensuring a non-negative result
     inline auto mod(std::integral auto x, std::integral auto m) {
+        assert(m != 0);
+
         auto r = x % m;
         if ((x < 0 != m < 0) && r != 0) r += m;
+        
         return r;
     }
 
@@ -21,7 +25,7 @@ namespace eulerus::number_theory {
         if (a < 0) a *= -1;
         if (b < 0) b *= -1;
         if (a < b) std::swap(a, b);
-
+        
         while (b != 0) a = std::exchange(b, mod(a, b));
         return a;
     }
