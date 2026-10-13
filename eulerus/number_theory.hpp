@@ -19,15 +19,12 @@ namespace eulerus::number_theory {
         return r;
     }
 
-    // Return the greatest common divisor of `a` and `b`
-    inline auto gcd(std::integral auto a, std::integral auto b) {
-        if (a == 0 && b == 0) return 0;
-        if (a < 0) a *= -1;
-        if (b < 0) b *= -1;
-        if (a < b) std::swap(a, b);
-        
-        while (b != 0) a = std::exchange(b, mod(a, b));
-        return a;
+    // Check if `a` divides `b` (`b` is a multiple of `a`)
+    inline bool divides(std::integral auto a, std::integral auto b) {
+        if (a == 0 && b == 0) return true;
+        if (b == 0) return true;
+        if (a == 0) return false;
+        return mod(a, b) == 0;
     }
 
     // Check if `x` is a prime number
@@ -41,6 +38,17 @@ namespace eulerus::number_theory {
         }
 
         return true;
+    }
+
+    // Return the greatest common divisor of `a` and `b`
+    inline auto gcd(std::integral auto a, std::integral auto b) {
+        if (a == 0 && b == 0) return 0;
+        if (a < 0) a *= -1;
+        if (b < 0) b *= -1;
+        if (a < b) std::swap(a, b);
+        
+        while (b != 0) a = std::exchange(b, mod(a, b));
+        return a;
     }
 
     // Return the least common multiple of `a` and `b`
