@@ -9,13 +9,13 @@ namespace eulerus::number_theory {
     /*                    Basic Integer Number Theory Functions                   */
     /* -------------------------------------------------------------------------- */
     
-    // Return `x` modulo `m`, ensuring a non-negative result
+    // Return `x` modulo `m`, ensuring the result is between 0 and `m`
     inline auto mod(std::integral auto x, std::integral auto m) {
         assert(m != 0);
 
         auto r = x % m;
         if ((x < 0 != m < 0) && r != 0) r += m;
-        
+
         return r;
     }
 
