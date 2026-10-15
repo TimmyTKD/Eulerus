@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <concepts>
+#include <type_traits>
 #include <utility>
 
 namespace eulerus::number_theory {
@@ -60,6 +61,39 @@ namespace eulerus::number_theory {
         if (a < b) std::swap(a, b);
         
         while (b != 0) a = std::exchange(b, mod(a, b));
+        return a;
+    }
+
+    // Return the greatest common divisor of `a` and `b`, and store the Bézout coefficients for `a` and `b` in `x` and `y` respectively
+    inline auto gcd(std::integral auto a, std::integral auto b, std::integral auto& x, std::integral auto& y) {
+        bool flipped_a = false;
+        bool flipped_b = false;
+        bool swapped = false;
+
+        if (a == 0 && b == 0) return 0;
+        if (a < 0) { a *= -1; flipped_a = true; }
+        if (b < 0) { b *= -1; flipped_b = true; }
+        if (a < b) { std::swap(a, b); swapped = true; }
+
+        decltype(a/b) q;
+        std::remove_reference_t<decltype(x)> x_prev = 1;
+        std::remove_reference_t<decltype(y)> y_prev = 0;
+        x = 0;
+        y = 1;
+        
+        while (b != 0) {
+            a = std::exchange(b, mod(a, b, q));
+            x_prev = std::exchange(x, x_prev - q * x);
+            y_prev = std::exchange(y, y_prev - q * y);
+        }
+
+        if (swapped) std::swap(x_prev, y_prev);
+        if (flipped_a) x_prev *= -1;
+        if (flipped_b) y_prev *= -1;
+
+        x = x_prev;
+        y = y_prev;
+
         return a;
     }
 
