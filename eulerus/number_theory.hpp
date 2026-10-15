@@ -71,7 +71,7 @@ namespace eulerus::number_theory {
 
     // Return the greatest common divisor of `a` and `b`, and store the Bézout coefficients for `a` and `b` in `x` and `y` respectively
     inline auto gcd(std::integral auto a, std::integral auto b, std::integral auto& x, std::integral auto& y) {
-        using Common = std::common_type_t<decltype(a), decltype(b)>;
+        using Common = std::common_type_t<decltype(a), decltype(b), decltype(x), decltype(y)>;
 
         if (a == 0 && b == 0) return Common(0);
         if (a < 0) a *= -1;
