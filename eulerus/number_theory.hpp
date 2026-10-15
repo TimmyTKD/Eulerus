@@ -60,6 +60,7 @@ namespace eulerus::number_theory {
         if (b < 0) b *= -1;
         if (a < b) std::swap(a, b);
         
+        // Calculate the gcd using the Euclidean algorithm
         while (b != 0) a = std::exchange(b, mod(a, b));
         return a;
     }
@@ -81,6 +82,7 @@ namespace eulerus::number_theory {
         x = 0;
         y = 1;
         
+        // Calculate the gcd and Bézout coefficients using the extended Euclidean algorithm
         while (b != 0) {
             a = std::exchange(b, mod(a, b, q));
             x_prev = std::exchange(x, x_prev - q * x);
