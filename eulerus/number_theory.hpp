@@ -18,6 +18,18 @@ namespace eulerus::number_theory {
 
         return r;
     }
+    
+    // Return `x` modulo `m`, ensuring the result is between 0 and `m`, and store the associated quotient in `q`
+    inline auto mod(std::integral auto x, std::integral auto m, std::integral auto& q) {
+        assert(m != 0);
+
+        auto r = x % m;
+        if ((x < 0 != m < 0) && r != 0) r += m;
+
+        q = (x - r) / m;
+
+        return r;
+    }
 
     // Check if `a` divides `b` (`b` is a multiple of `a`)
     inline bool divides(std::integral auto a, std::integral auto b) {
