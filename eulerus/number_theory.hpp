@@ -55,55 +55,65 @@ namespace eulerus::number_theory {
 
     // Return the greatest common divisor of `a` and `b`
     inline auto gcd(std::integral auto a, std::integral auto b) {
-        if (a == 0 && b == 0) return 0;
+        using Common = std::common_type_t<decltype(a), decltype(b)>;
+
+        if (a == 0 && b == 0) return Common(0);
         if (a < 0) a *= -1;
         if (b < 0) b *= -1;
-        if (a < b) std::swap(a, b);
+
+        Common d = b > a ? b : a;
+        Common modulus = b > a ? a : b;
         
         // Calculate the gcd using the Euclidean algorithm
-        while (b != 0) a = std::exchange(b, mod(a, b));
-        return a;
+        while (modulus != 0) d = std::exchange(modulus, mod(d, modulus));
+        return d;
     }
 
     // Return the greatest common divisor of `a` and `b`, and store the Bézout coefficients for `a` and `b` in `x` and `y` respectively
     inline auto gcd(std::integral auto a, std::integral auto b, std::integral auto& x, std::integral auto& y) {
-        bool flipped_a = false;
-        bool flipped_b = false;
-        bool swapped = false;
+        using Common = std::common_type_t<decltype(a), decltype(b)>;
 
-        if (a == 0 && b == 0) return 0;
-        if (a < 0) { a *= -1; flipped_a = true; }
-        if (b < 0) { b *= -1; flipped_b = true; }
-        if (a < b) { std::swap(a, b); swapped = true; }
+        if (a == 0 && b == 0) return Common(0);
+        if (a < 0) a *= -1;
+        if (b < 0) b *= -1;
 
-        decltype(a/b) q;
-        std::remove_reference_t<decltype(x)> x_prev = 1;
-        std::remove_reference_t<decltype(y)> y_prev = 0;
-        x = 0;
-        y = 1;
+        Common d = b > a ? b : a;
+        Common modulus = b > a ? a : b;
+
+        Common q;
+        Common x_previous = Common(1);
+        Common y_previous = Common(0);
+        Common x_current = Common(0);
+        Common y_current = Common(1);
         
         // Calculate the gcd and Bézout coefficients using the extended Euclidean algorithm
-        while (b != 0) {
-            a = std::exchange(b, mod(a, b, q));
-            x_prev = std::exchange(x, x_prev - q * x);
-            y_prev = std::exchange(y, y_prev - q * y);
+        while (modulus != 0) {
+            d = std::exchange(modulus, mod(d, modulus, q));
+            x_previous = std::exchange(x_current, x_previous - q * x_current);
+            y_previous = std::exchange(y_current, y_previous - q * y_current);
         }
 
-        if (swapped) std::swap(x_prev, y_prev);
-        if (flipped_a) x_prev *= -1;
-        if (flipped_b) y_prev *= -1;
+        x_current = x_previous;
+        y_current = y_previous;
 
-        x = x_prev;
-        y = y_prev;
+        if (b > a) std::swap(x_current, y_current);
+        if (a < 0) x_current *= -1;
+        if (b < 0) y_current *= -1;
 
-        return a;
+        x = x_current;
+        y = y_current;
+
+        return d;
     }
 
     // Return the least common multiple of `a` and `b`
     inline auto lcm(std::integral auto a, std::integral auto b) {
-        if (a == 0 && b == 0) return 0;
+        using Common = std::common_type_t<decltype(a), decltype(b)>;
+
+        if (a == 0 && b == 0) return Common(0);
         if (a < 0) a *= -1;
         if (b < 0) b *= -1;
-        return (a / gcd(a, b)) * b;
+
+        return (Common(a) / gcd(a, b)) * Common(b);
     }
 }
