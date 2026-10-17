@@ -61,7 +61,7 @@ namespace eulerus::number_theory {
         if (x % 2 == 0) { lpf = 2; return false; }
         if (x % 3 == 0) { lpf = 3; return false; }
 
-        for (decltype(x) i = 5; i * i < x; i += 6) {
+        for (decltype(x) i = 5; i * i <= x; i += 6) {
             if (x % i == 0) { lpf = i; return false; };
             if (x % (i + 2) == 0) { lpf = i + 2; return false; };
         }
