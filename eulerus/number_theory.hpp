@@ -70,6 +70,26 @@ namespace eulerus::number_theory {
         return true;
     }
 
+    // Return the number of positive integers less than or equal to `x` that are coprime with `x`
+    inline auto totient(std::integral auto x) {
+        assert(x > 0);
+
+        if (x == 1) return x;
+
+        decltype(x) lpf;
+        if (is_prime(x, lpf)) return x - 1;
+        
+        decltype(x) lpf_totient = lpf - 1;
+        x /= lpf;
+
+        while (x % lpf == 0) {
+            lpf_totient *= lpf;
+            x /= lpf;
+        }
+
+        return lpf_totient * totient(x);
+    }
+
     // Return the greatest common divisor of `a` and `b`
     inline auto gcd(std::integral auto a, std::integral auto b) {
         using Common = std::common_type_t<decltype(a), decltype(b)>;
