@@ -53,6 +53,23 @@ namespace eulerus::number_theory {
         return true;
     }
 
+    // Check if `x` is a prime number, and store its lowest prime factor in `lpf`
+    inline bool is_prime(std::integral auto x, std::integral auto& lpf) {
+        if (x < 0) { is_prime(-x, lpf); return false; }
+        if (x == 0 || x == 1) { lpf = x; return false; }
+        if (x == 2 || x == 3) { lpf = x; return true; }
+        if (x % 2 == 0) { lpf = 2; return false; }
+        if (x % 3 == 0) { lpf = 3; return false; }
+
+        for (decltype(x) i = 5; i * i < x; i += 6) {
+            if (x % i == 0) { lpf = i; return false; };
+            if (x % (i + 2) == 0) { lpf = i + 2; return false; };
+        }
+        
+        lpf = x;
+        return true;
+    }
+
     // Return the greatest common divisor of `a` and `b`
     inline auto gcd(std::integral auto a, std::integral auto b) {
         using Common = std::common_type_t<decltype(a), decltype(b)>;
