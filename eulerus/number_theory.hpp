@@ -73,7 +73,12 @@ namespace eulerus::number_theory {
     inline auto gcd(std::integral auto a, std::integral auto b, std::integral auto& x, std::integral auto& y) {
         using Common = std::common_type_t<decltype(a), decltype(b), decltype(x), decltype(y)>;
 
-        if (a == 0 && b == 0) return Common(0);
+        if (a == 0 && b == 0) {
+            x = Common(0);
+            y = Common(0);
+            return Common(0);
+        }
+
         if (a < 0) a *= -1;
         if (b < 0) b *= -1;
 
