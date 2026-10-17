@@ -55,8 +55,9 @@ namespace eulerus::number_theory {
 
     // Check if `x` is a prime number, and store its lowest prime factor in `lpf`
     inline bool is_prime(std::integral auto x, std::integral auto& lpf) {
-        if (x < 0) { is_prime(-x, lpf); return false; }
-        if (x == 0 || x == 1) { lpf = x; return false; }
+        assert(x > 0);
+
+        if (x == 1) { lpf = x; return false; }
         if (x == 2 || x == 3) { lpf = x; return true; }
         if (x % 2 == 0) { lpf = 2; return false; }
         if (x % 3 == 0) { lpf = 3; return false; }
