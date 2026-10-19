@@ -112,8 +112,8 @@ namespace eulerus::number_theory {
         using Common = std::common_type_t<decltype(a), decltype(b), decltype(x), decltype(y)>;
 
         if (a == 0 && b == 0) {
-            x = Common(0);
-            y = Common(0);
+            x = 0;
+            y = 0;
             return Common(0);
         }
 
@@ -124,10 +124,10 @@ namespace eulerus::number_theory {
         Common modulus = b > a ? a : b;
 
         Common q;
-        Common x_previous = Common(1);
-        Common y_previous = Common(0);
-        Common x_current = Common(0);
-        Common y_current = Common(1);
+        Common x_previous = 1;
+        Common y_previous = 0;
+        Common x_current = 0;
+        Common y_current = 1;
         
         // Calculate the gcd and Bézout coefficients using the extended Euclidean algorithm
         while (modulus != 0) {
