@@ -473,6 +473,17 @@ namespace eulerus::set_theory {
                 }
             }
 
+            // Construct a typed set from a generic set
+            TypedSet(const Set& set) : Set(set), _elements{} {
+                for (auto it = Set::begin(); it != Set::end(); it++) {
+                    const SetElement& element = *it;
+                    
+                    if (element.is_type<T>()) {
+                        _elements.insert(element.cast<T>());
+                    }
+                }
+            }
+
             // Return an iterator pointing to the first element in the set
             auto begin() const { return _elements.begin(); }
 
