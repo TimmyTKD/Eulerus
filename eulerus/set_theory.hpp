@@ -455,6 +455,48 @@ namespace eulerus::set_theory {
 
         return Set::from_iterable(elements);
     }
+
+    /* -------------------------------------------------------------------------- */
+    /*                                Set Variants                                */
+    /* -------------------------------------------------------------------------- */
+
+    // Set class that holds elements of the same type
+    template <typename T>
+    class TypedSet : public Set {
+        public:
+            // Construct an empty typed set
+            TypedSet() = default;
+
+            // Construct a typed set with elements of the same type
+            template <std::same_as<T>... Args>
+            TypedSet(Args... args) : Set(args...), _elements{args...} {}
+
+            // Construct a typed set from a generic set
+            TypedSet(Set&& set) : Set(std::move(set)), _elements{} {
+                for (auto it = Set::begin(); it != Set::end(); it++) {
+                    const SetElement& element = *it;
+
+                    if (element.is_type<T>()) {
+                        _elements.insert(element.cast<T>());
+                    }
+                }
+            }
+
+            // Return an iterator pointing to the first element in the set
+            auto begin() const { return _elements.begin(); }
+
+            // Return an iterator pointing to the last element in the set
+            auto end() const { return _elements.end(); }
+
+            TypedSet intersect(const Set& other) const { return Set::intersect(other); }
+        
+        private:
+            std::unordered_set<T> _elements;
+    };
+
+    // Template deduction guide to deduce the TypedSet type based on the arguments
+    template <typename T, std::same_as<T>... Args>
+    TypedSet(T, Args...) -> TypedSet<T>;
 }
 
 // Custom specialization of std::hash for Set class
