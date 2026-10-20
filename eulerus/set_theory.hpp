@@ -374,17 +374,8 @@ namespace eulerus::set_theory {
             // Set equality operator overload
             bool operator==(const Set& other) const { return equal_to(other); }
 
-            // Subset operator overload
-            bool operator<=(const Set& other) const { return subset_of(other); }
-
-            // Superset operator overload
-            bool operator>=(const Set& other) const { return superset_of(other); }
-
-            // Strict subset operator overload
-            bool operator<(const Set& other) const { return subset_of(other) && !equal_to(other); }
-
-            // Strict superset operator overload
-            bool operator>(const Set& other) const { return superset_of(other) && !equal_to(other); }
+            // Compare two sets based on their size
+            std::strong_ordering operator<=>(const Set& other) const { return this->size() <=> other.size(); }
 
         private:
             std::unordered_set<SetElement, SetElement::Hash> _elements;
