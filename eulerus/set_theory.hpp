@@ -495,8 +495,8 @@ namespace eulerus::set_theory {
     };
 
     // Template deduction guide to deduce the TypedSet type based on the arguments
-    template <typename T, std::same_as<T>... Args>
-    TypedSet(T, Args...) -> TypedSet<T>;
+    template <typename T>
+    TypedSet(T...) -> TypedSet<T>;
 }
 
 // Custom specialization of std::hash for Set class
