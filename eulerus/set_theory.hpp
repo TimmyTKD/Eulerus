@@ -488,7 +488,41 @@ namespace eulerus::set_theory {
             // Return an iterator pointing to the last element in the set
             auto end() const { return _elements.end(); }
 
+            // Return the union of this set and another set
+            TypedSet merge(const Set& other) const { return Set::merge(other); }
+
+            // Return the intersection of this set and another set
             TypedSet intersect(const Set& other) const { return Set::intersect(other); }
+
+            // Return the difference of this set and another set
+            TypedSet difference(const Set& other) const { return Set::difference(other); }
+
+            // Return the symmetric difference of this set and another set
+            TypedSet symmetric_difference(const Set& other) const { return Set::symmetric_difference(other); }
+
+            // Return the complement of this set with respect to some universal set
+            TypedSet complement(const Set& universal_set) const { return Set::complement(universal_set); }
+
+            // Return the cartesian product of this set and another set
+            TypedSet cartesian_product(const Set& other) const { return Set::cartesian_product(other); }
+
+            // Union operator overload
+            TypedSet operator|(const Set& other) const { return merge(other); }
+
+            // Alternative union operator overload
+            TypedSet operator+(const Set& other) const { return merge(other); }
+
+            // Intersection operator overload
+            TypedSet operator&(const Set& other) const { return intersect(other); }
+
+            // Set difference operator overload
+            TypedSet operator-(const Set& other) const { return difference(other); }
+
+            // Symmetric difference operator overload
+            TypedSet operator^(const Set& other) const { return symmetric_difference(other); }
+
+            // Cartesian product operator overload
+            TypedSet operator*(const Set& other) const { return this->cartesian_product(other); }
         
         private:
             std::unordered_set<T> _elements;
