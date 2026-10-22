@@ -377,7 +377,7 @@ namespace eulerus::set_theory {
             // Compare two sets based on their size
             std::strong_ordering operator<=>(const Set& other) const { return this->size() <=> other.size(); }
 
-        private:
+        protected:
             std::unordered_set<SetElement, SetElement::Hash> _elements;
     };
 
@@ -463,12 +463,11 @@ namespace eulerus::set_theory {
             TypedSet(Args... args) : Set(args...), _elements{args...} {}
 
             // Construct a typed set from a generic set
-            TypedSet(const Set& set) : Set(set), _elements{} {
-                for (auto it = Set::begin(); it != Set::end(); it++) {
-                    const SetElement& element = *it;
-                    
+            TypedSet(const Set& set) : Set(), _elements{} {
+                for (const auto& element : set) {
                     if (element.is_type<T>()) {
                         _elements.insert(element.cast<T>());
+                        Set::_elements.insert(element);
                     }
                 }
             }
