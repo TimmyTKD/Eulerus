@@ -180,6 +180,7 @@ namespace eulerus::set_theory {
 
             // Construct a set with elements of different types
             template <typename... Types>
+            requires (!(sizeof...(Types) == 1 && (std::derived_from<Types, Set> && ...)))
             Set(Types... args) : _elements{SetElement(args)...} {} 
             
             // Construct a set from an iterable collection
