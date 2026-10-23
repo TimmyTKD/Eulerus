@@ -191,6 +191,19 @@ namespace eulerus::set_theory {
                 return set;
             }
 
+            // Return the set in the form of a set element, which can be used to create nested sets
+            SetElement as_element() {
+                std::size_t hash = typeid(Set).hash_code();
+                auto hasher = SetElement::Hash();
+
+                // Hash each element in the set, using the same method as the boost library's hash_combine function
+                for (const auto& element : _elements) {
+                    hash ^= hasher(element) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
+                }
+
+                return SetElement(*this, hash);
+            }
+            
             // Output the set to an io stream
             friend std::ostream& operator<<(std::ostream& os, const Set& set) {
                 os << "{";
@@ -522,21 +535,3 @@ namespace eulerus::set_theory {
     template <typename T>
     TypedSet(T...) -> TypedSet<T>;
 }
-
-// Custom specialization of std::hash for Set class
-template<>
-struct std::hash<eulerus::set_theory::Set>
-{
-    std::size_t operator()(const eulerus::set_theory::Set& set) const
-    {
-        std::size_t hash = typeid(eulerus::set_theory::Set).hash_code();
-
-        // Hash each element in the set, using the same method as the boost library's hash_combine function
-        for (const auto& element : set) {
-            auto hasher = eulerus::set_theory::SetElement::Hash();
-            hash ^= hasher(element) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-        }
-
-        return hash;
-    }
-};
