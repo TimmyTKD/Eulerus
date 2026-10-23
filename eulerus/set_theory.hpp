@@ -382,7 +382,7 @@ namespace eulerus::set_theory {
     };
 
     // Return the union of several sets
-    template <std::same_as<Set>... Sets>
+    template <std::derived_from<Set>... Sets>
     requires(sizeof...(Sets) >= 2)
     inline Set merge_sets(const Sets&... sets) {
         std::unordered_set<SetElement, SetElement::Hash> elements;
@@ -391,7 +391,7 @@ namespace eulerus::set_theory {
     }
 
     // Return the intersection of several sets
-    template <std::same_as<Set>... Sets>
+    template <std::derived_from<Set>... Sets>
     requires(sizeof...(Sets) >= 2)
     inline Set intersect_sets(const Sets&... sets) {
         std::unordered_set<SetElement, SetElement::Hash> elements;
@@ -418,7 +418,7 @@ namespace eulerus::set_theory {
     }
 
     // Return the cartesian product of several sets
-    template <std::same_as<Set>... Sets>
+    template <std::derived_from<Set>... Sets>
     requires(sizeof...(Sets) >= 2)
     inline Set cartesian_product(const Sets&... sets) {
         std::unordered_set<SetElement, SetElement::Hash> elements;
