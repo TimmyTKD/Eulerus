@@ -229,6 +229,12 @@ namespace eulerus::set_theory {
                 return _elements.size();
             }
 
+            // Insert a new element into the set, returning true if the set changed
+            template <typename T>
+            bool insert(T element) {
+                return _elements.insert(element).second;
+            }
+
             // Check if the set contains a specific element
             template <typename T>
             bool contains(T element) const {
@@ -484,6 +490,12 @@ namespace eulerus::set_theory {
                         Set::_elements.insert(element);
                     }
                 }
+            }
+
+            // Insert a new element into the set, returning true if the set changed
+            bool insert(T element) {
+                Set::_elements.insert(element);
+                return _elements.insert(element).second;
             }
 
             // Return an iterator pointing to the first element in the set
