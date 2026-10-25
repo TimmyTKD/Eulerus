@@ -441,7 +441,7 @@ namespace eulerus::set_theory {
     template <std::derived_from<Set>... Sets>
     requires(sizeof...(Sets) >= 2)
     inline Set cartesian_product(const Sets&... sets) {
-        std::unordered_set<SetElement, SetElement::Hash> elements;
+        Set result;
         const Set* set_array[sizeof...(Sets)] = {(&sets)...};
 
         // Return the empty set if any of the sets are empty
@@ -450,11 +450,11 @@ namespace eulerus::set_theory {
         }
 
         // Recursively loop through the sets to construct ordered tuples using their elements
-        auto recursive_loop = [&set_array, &elements](auto&& recursive_loop, auto n, const auto&... items) {
+        auto recursive_loop = [&set_array, &result](auto&& recursive_loop, auto n, const auto&... items) {
             for (const auto& element : *set_array[n.value]) {
                 if constexpr (n.value == sizeof...(Sets) - 1) {
                     SetElementTuple<sizeof...(Sets)> tuple = SetElementTuple<sizeof...(Sets)>(items..., element);
-                    elements.insert(SetElement(tuple, tuple.hash));
+                    result.insert(SetElement(tuple, tuple.hash));
                 }
                 else {
                     recursive_loop(recursive_loop, std::integral_constant<std::size_t, n + 1>{}, items..., element);
@@ -464,7 +464,7 @@ namespace eulerus::set_theory {
 
         recursive_loop(recursive_loop, std::integral_constant<std::size_t, 0>{});
 
-        return Set::from_iterable(elements);
+        return result;
     }
 
     /* -------------------------------------------------------------------------- */
