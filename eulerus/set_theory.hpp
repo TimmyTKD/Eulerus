@@ -397,7 +397,7 @@ namespace eulerus::set_theory {
             // Compare two sets based on their size
             std::strong_ordering operator<=>(const Set& other) const { return this->size() <=> other.size(); }
 
-        protected:
+        private:
             std::unordered_set<SetElement, SetElement::Hash> _elements;
     };
 
@@ -487,14 +487,14 @@ namespace eulerus::set_theory {
                 for (const auto& element : set) {
                     if (element.is_type<T>()) {
                         _elements.insert(element.cast<T>());
-                        Set::_elements.insert(element);
+                        Set::insert(element);
                     }
                 }
             }
 
             // Insert a new element into the set, returning true if the set changed
             bool insert(T element) {
-                Set::_elements.insert(element);
+                Set::insert(element);
                 return _elements.insert(element).second;
             }
 
