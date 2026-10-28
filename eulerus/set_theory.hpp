@@ -235,6 +235,12 @@ namespace eulerus::set_theory {
                 return _elements.insert(element).second;
             }
 
+            // Remove an element from the set, returning true if the set changed
+            template <typename T>
+            bool remove(T element) {
+                return _elements.erase(SetElement(element)) > 0;
+            }
+
             // Check if the set contains a specific element
             template <typename T>
             bool contains(T element) const {
