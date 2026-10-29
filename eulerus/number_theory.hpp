@@ -39,7 +39,7 @@ namespace eulerus::number_theory {
         if (a == 0 && b == 0) return true;
         if (b == 0) return true;
         if (a == 0) return false;
-        return mod(b, a) == 0;
+        return b % a == 0;
     }
 
     // Check if `x` is a prime number
