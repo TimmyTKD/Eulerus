@@ -5,6 +5,8 @@
 #include <type_traits>
 #include <utility>
 
+#include "set_theory.hpp"
+
 namespace eulerus::number_theory {
     /* -------------------------------------------------------------------------- */
     /*                    Basic Integer Number Theory Functions                   */
@@ -90,6 +92,29 @@ namespace eulerus::number_theory {
         }
 
         return lpf_totient * totient(x);
+    }
+
+    // Return a set containing the prime numbers that are a factor of `x`
+    inline auto prime_factors(std::integral auto x) {
+        assert(x > 1);
+
+        set_theory::TypedSet<decltype(x)> factors;
+        decltype(x) lpf; 
+
+        while (x > 1) {
+            if (is_prime(x, lpf)) {
+                factors.insert(x);
+                break;
+            } else {
+                factors.insert(lpf);
+
+                while (x % lpf == 0) {
+                    x /= lpf;
+                }
+            }
+        }
+
+        return factors;
     }
 
     // Return the greatest common divisor of `a` and `b`
