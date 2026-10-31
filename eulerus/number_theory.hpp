@@ -117,6 +117,25 @@ namespace eulerus::number_theory {
         return factors;
     }
 
+    // Return a set containing the integers that divide `x`
+    inline auto divisors(std::integral auto x) {
+        assert(x != 0);
+        if (x < 0) x *= -1;
+
+        set_theory::TypedSet<decltype(x)> divisors;
+        
+        for (decltype(x) i = 1; i * i <= x; i++) {
+            if (x % i == 0) {
+                divisors.insert(i);
+                divisors.insert(-i);
+                divisors.insert(x / i);
+                divisors.insert(-x / i);
+            }
+        }
+
+        return divisors;
+    }
+
     // Return the greatest common divisor of `a` and `b`
     inline auto gcd(std::integral auto a, std::integral auto b) {
         using Common = std::common_type_t<decltype(a), decltype(b)>;
