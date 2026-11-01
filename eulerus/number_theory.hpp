@@ -78,20 +78,25 @@ namespace eulerus::number_theory {
     inline auto totient(std::integral auto x) {
         assert(x > 0);
 
-        if (x == 1) return x;
-
+        decltype(x) result = 1;
         decltype(x) lpf;
-        if (is_prime(x, lpf)) return x - 1;
-        
-        decltype(x) lpf_totient = lpf - 1;
-        x /= lpf;
 
-        while (x % lpf == 0) {
-            lpf_totient *= lpf;
-            x /= lpf;
+        while (x > 1) { 
+            if (is_prime(x, lpf)) {
+                result *= x - 1;
+                break;
+            } else {
+                result *= lpf - 1;
+                x /= lpf;
+
+                while (x % lpf == 0) {
+                    result *= lpf;
+                    x /= lpf;
+                }
+            }
         }
 
-        return lpf_totient * totient(x);
+        return result;
     }
 
     // Return a set containing the prime numbers that are a factor of `x`
