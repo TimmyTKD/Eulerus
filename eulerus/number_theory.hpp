@@ -170,7 +170,10 @@ namespace eulerus::number_theory {
         Common modulus = b > a ? a : b;
         
         // Calculate the gcd using the Euclidean algorithm
-        while (modulus != 0) d = std::exchange(modulus, mod(d, modulus));
+        while (modulus != 0) {
+            d = std::exchange(modulus, mod(d, modulus));
+        }
+        
         return d;
     }
 
