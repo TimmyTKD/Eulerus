@@ -504,6 +504,12 @@ namespace eulerus::set_theory {
                 return _elements.insert(element).second;
             }
 
+            // Remove an element from the set, returning true if the set changed
+            bool remove(T element) {
+                Set::remove(element);
+                return _elements.erase(element) > 0;
+            }
+
             // Return an iterator pointing to the first element in the set
             auto begin() const { return _elements.begin(); }
 
