@@ -42,6 +42,10 @@ namespace eulerus::number_theory {
         return b % a == 0;
     }
 
+    /* -------------------------------------------------------------------------- */
+    /*                           Prime Number Functions                           */
+    /* -------------------------------------------------------------------------- */
+
     // Check if `x` is a prime number
     inline bool is_prime(std::integral auto x) {
         if (x <= 1) return false;
@@ -122,6 +126,10 @@ namespace eulerus::number_theory {
         return factors;
     }
 
+    /* -------------------------------------------------------------------------- */
+    /*                           Divisors and Multiples                           */
+    /* -------------------------------------------------------------------------- */
+
     // Return a set containing the integers that divide `x`
     inline auto divisors(std::integral auto x) {
         assert(x != 0);
@@ -173,7 +181,7 @@ namespace eulerus::number_theory {
         while (modulus != 0) {
             d = std::exchange(modulus, mod(d, modulus));
         }
-        
+
         return d;
     }
 
