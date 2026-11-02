@@ -534,6 +534,16 @@ namespace eulerus::set_theory {
             // Return the cartesian product of this set and another set
             TypedSet cartesian_product(const TypedSet& other) const { return Set::cartesian_product(other); }
 
+            // Return a subset containing elements that satisfy the given condition
+            template <typename Predicate>
+            requires (std::predicate<Predicate, T>)
+            TypedSet select(Predicate condition) const { return Set::select(condition); }
+
+            // Return a new set with elements transformed by the given function
+            template <typename Func>
+            requires (std::is_invocable_r_v<T, Func, T>)
+            TypedSet transform(Func transformation) const { return Set::transform(transformation); }
+
             // Union operator overload
             TypedSet operator|(const TypedSet& other) const { return merge(other); }
 
