@@ -90,6 +90,7 @@ namespace eulerus::number_theory {
                 result *= x - 1;
                 break;
             } else {
+                // Use the formula: phi(n) = p1^(k1-1) * (p1 - 1) * p2^(k2-1) * (p2 - 1) * ..., for the prime factorization n = p1^k1 * p2^k2 * ...
                 result *= lpf - 1;
                 x /= lpf;
 
