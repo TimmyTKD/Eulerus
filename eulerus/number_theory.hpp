@@ -235,6 +235,7 @@ namespace eulerus::number_theory {
         if (a < 0) a *= -1;
         if (b < 0) b *= -1;
 
+        // Calculate the lcm using the relationship between gcd and lcm
         return (Common(a) / gcd(a, b)) * Common(b);
     }
 }
