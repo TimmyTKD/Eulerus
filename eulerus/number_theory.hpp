@@ -239,4 +239,17 @@ namespace eulerus::number_theory {
         // Calculate the lcm using the relationship between gcd and lcm
         return (Common(a) / gcd(a, b)) * Common(b);
     }
+
+    /* -------------------------------------------------------------------------- */
+    /*                        Linear Diophantine Equations                        */
+    /* -------------------------------------------------------------------------- */
+
+    // Check if the linear Diophantine equation `ax + by = c` has integer solution pairs (x, y)
+    inline bool lde_solvable(std::integral auto a, std::integral auto b, std::integral auto c) {
+        if (a == 0 && b == 0) return c == 0;
+        if (a == 0) return divides(b, c);
+        if (b == 0) return divides(a, c);
+
+        return divides(gcd(a, b), c);
+    }
 }
