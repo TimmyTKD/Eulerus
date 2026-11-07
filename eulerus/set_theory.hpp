@@ -14,7 +14,7 @@
 
 namespace eulerus::set_theory {
     /* -------------------------------------------------------------------------- */
-    /*                                    Sets                                    */
+    /*                                 Set Helpers                                */
     /* -------------------------------------------------------------------------- */
 
     // Helper struct to store elements of different types in a set
@@ -171,6 +171,10 @@ namespace eulerus::set_theory {
             return N <=> M;
         }
     };
+
+    /* -------------------------------------------------------------------------- */
+    /*                                    Sets                                    */
+    /* -------------------------------------------------------------------------- */
 
     // Mathematical set class that can hold elements of different types
     class Set {
