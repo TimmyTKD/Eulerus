@@ -245,7 +245,7 @@ namespace eulerus::number_theory {
     /* -------------------------------------------------------------------------- */
 
     // Check if the linear Diophantine equation `ax + by = c` has integer solution pairs (x, y)
-    inline bool lde_solvable(std::integral auto a, std::integral auto b, std::integral auto c) {
+    inline bool is_lde_solvable(std::integral auto a, std::integral auto b, std::integral auto c) {
         if (a == 0 && b == 0) return c == 0;
         if (a == 0) return divides(b, c);
         if (b == 0) return divides(a, c);
@@ -254,7 +254,7 @@ namespace eulerus::number_theory {
     }
 
     // Check if the linear Diophantine equation `ax + by = c` has integer solution pairs (x, y), and store one of the solution pairs in `x_0` and `y_0`
-    inline bool lde_solvable(std::integral auto a, std::integral auto b, std::integral auto c, std::integral auto& x_0, std::integral auto& y_0) {
+    inline bool is_lde_solvable(std::integral auto a, std::integral auto b, std::integral auto c, std::integral auto& x_0, std::integral auto& y_0) {
         using Common = std::common_type_t<decltype(a), decltype(b), decltype(c), decltype(x_0), decltype(y_0)>;
         
         if (a == 0 && b == 0) { x_0 = 0; y_0 = 0; return c == 0; }
