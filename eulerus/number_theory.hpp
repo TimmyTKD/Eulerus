@@ -250,7 +250,7 @@ namespace eulerus::number_theory {
         if (a == 0) return divides(b, c);
         if (b == 0) return divides(a, c);
 
-        return divides(gcd(a, b), c);
+        return c % gcd(a, b) == 0;
     }
 
     // Check if the linear Diophantine equation `ax + by = c` has integer solution pairs (x, y), and store one of the solution pairs in `x_0` and `y_0`
@@ -266,6 +266,6 @@ namespace eulerus::number_theory {
         x_0 *= c / d;
         y_0 *= c / d;
 
-        return divides(d, c);
+        return c % gcd(a, b) == 0;
     }
 }
