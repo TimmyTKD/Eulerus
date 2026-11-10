@@ -19,9 +19,8 @@ Various operations are provided that can be performed on and between sets, such 
 ### Number Theory
 This component provides various functions that deal with integers and their properties, including divisibility and prime numbers. 
 
-Some examples include finding the greatest common denominator of two integers alongside their Bézout coefficients, determining whether an integer is prime, and finding all the divisors of an integer.
+Some examples include finding the greatest common divisor of two integers alongside their Bézout coefficients, determining whether an integer is prime, and finding all the divisors of an integer.
 
 ### Calculus
 
-This component mainly focuses on numerical differentiation and integration, such as providing functions that can approximate the derivative of a function at a given point, as well as the definite integral of a function over a given interval.
-
+This component mainly focuses on numerical differentiation and integration, such as providing functions that can approximate the derivative of a function at a given point, as well as the definite integral of a function over a given interval. 
