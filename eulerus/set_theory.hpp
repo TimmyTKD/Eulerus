@@ -173,7 +173,7 @@ namespace eulerus::set_theory {
     };
 
     /* -------------------------------------------------------------------------- */
-    /*                                    Sets                                    */
+    /*                                  Set Class                                 */
     /* -------------------------------------------------------------------------- */
 
     // Mathematical set class that can hold elements of different types
