@@ -535,9 +535,6 @@ namespace eulerus::set_theory {
             // Return the complement of this set with respect to some universal set
             TypedSet complement(const TypedSet& universal_set) const { return Set::complement(universal_set); }
 
-            // Return the cartesian product of this set and another set
-            TypedSet cartesian_product(const TypedSet& other) const { return Set::cartesian_product(other); }
-
             // Return a subset containing elements that satisfy the given condition
             template <typename Predicate>
             requires (std::predicate<Predicate, T>)
@@ -562,9 +559,6 @@ namespace eulerus::set_theory {
 
             // Symmetric difference operator overload
             TypedSet operator^(const TypedSet& other) const { return symmetric_difference(other); }
-
-            // Cartesian product operator overload
-            TypedSet operator*(const TypedSet& other) const { return this->cartesian_product(other); }
         
         private:
             std::unordered_set<T> _elements;
