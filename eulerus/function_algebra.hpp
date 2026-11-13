@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace eulerus::functions {
+namespace eulerus::function_algebra {
     /* -------------------------------------------------------------------------- */
     /*                           Function Wrapper Class                           */
     /* -------------------------------------------------------------------------- */
