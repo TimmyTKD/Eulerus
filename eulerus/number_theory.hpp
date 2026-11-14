@@ -268,4 +268,23 @@ namespace eulerus::number_theory {
 
         return c % gcd(a, b) == 0;
     }
+
+    /* -------------------------------------------------------------------------- */
+    /*                          Modular Arithmetic Class                          */
+    /* -------------------------------------------------------------------------- */
+
+    template <std::size_t M>
+    class Congruence {
+        public:
+            std::size_t value;
+
+            Congruence(std::integral auto x) {
+                while (x < 0) x += M;
+                value = x % M;
+            }
+
+            Congruence operator+(const Congruence& other) const {
+                return (value + other.value) % M;
+            }
+    };
 }
