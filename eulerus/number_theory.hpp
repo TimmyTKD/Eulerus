@@ -280,14 +280,11 @@ namespace eulerus::number_theory {
             std::size_t value;
 
             // Construct a congruence class with a value between 0 and `M`
-            Congruence(std::integral auto x) {
-                while (x < 0) x += M;
-                value = x % M;
-            }
+            Congruence(std::integral auto x) : value(mod(x, M)) {}
 
             // Add two congruence classes together
             Congruence operator+(const Congruence& other) const {
-                return (value + other.value) % M;
+                return value + other.value;
             }
     };
 }
