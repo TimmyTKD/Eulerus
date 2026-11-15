@@ -16,19 +16,20 @@ namespace eulerus::number_theory {
     inline auto mod(std::integral auto x, std::integral auto m) {
         assert(m != 0);
 
-        auto r = x % m;
-        if ((x < 0 != m < 0) && r != 0) r += m;
-
-        return r;
+        if (x < 0 && m > 0) {
+            return -x % m;
+        } else if (x > 0 && m < 0) {
+            return static_cast<decltype(m)>((x - 1) % -m) - m + 1;
+        } else {
+            return x % m;
+        }
     }
     
     // Return `x` modulo `m`, ensuring the result is between 0 and `m`, and store the associated quotient in `q`
     inline auto mod(std::integral auto x, std::integral auto m, std::integral auto& q) {
         assert(m != 0);
-
-        auto r = x % m;
-        if ((x < 0 != m < 0) && r != 0) r += m;
-
+        
+        auto r = mod(x, m);
         q = (x - r) / m;
 
         return r;
