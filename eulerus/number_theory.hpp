@@ -273,6 +273,7 @@ namespace eulerus::number_theory {
     /*                          Modular Arithmetic Class                          */
     /* -------------------------------------------------------------------------- */
 
+    // Class representing a congruence class modulo `M`
     template <std::size_t M>
     class Congruence {
         public:
