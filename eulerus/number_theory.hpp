@@ -13,15 +13,24 @@ namespace eulerus::number_theory {
     /* -------------------------------------------------------------------------- */
     
     // Return `x` modulo `m`, ensuring the result is between 0 and `m`
-    inline auto mod(std::integral auto x, std::integral auto m) {
+    template <std::integral T>
+    inline T mod(std::integral auto x, T m) {
         assert(m != 0);
 
-        if (x < 0 && m > 0) {
-            return -x % m;
-        } else if (x > 0 && m < 0) {
-            return static_cast<decltype(m)>((x - 1) % -m) - m + 1;
+        if (m < 0) {
+            if (x < 0) {
+                return x % m;
+            } else {
+                if (x % -m == 0) return 0;
+                return (T)(x % -m) + m;
+            }
         } else {
-            return x % m;
+            if (x < 0) {
+                if (-x % m == 0) return 0;
+                return m - (-x % m);
+            } else {
+                return x % m;
+            }
         }
     }
     
@@ -30,7 +39,19 @@ namespace eulerus::number_theory {
         assert(m != 0);
         
         auto r = mod(x, m);
-        q = (x - r) / m;
+
+        if ((x < 0) == (m < 0)) {
+            q = x / m;
+        } else {
+            if (x < 0) {
+                q = (-x) / m;
+            } else {
+                q = x / (-m);
+            }
+
+            q = -q;
+            if (r != 0) q -= 1;
+        }
 
         return r;
     }
