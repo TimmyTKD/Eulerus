@@ -301,6 +301,9 @@ namespace eulerus::number_theory {
         public:
             std::size_t value;
 
+            // Constructor a congruence class with a value of 0 by default
+            Congruence() : value(0) {}
+
             // Construct a congruence class with a value between 0 and `M`
             Congruence(std::integral auto x) : value(mod(x, M)) {}
 
