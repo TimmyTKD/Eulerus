@@ -316,5 +316,10 @@ namespace eulerus::number_theory {
             Congruence operator+(const Congruence& other) const {
                 return value + other.value;
             }
+
+            // Subtract one congruence class from another
+            Congruence operator-(const Congruence& other) const {
+                return value >= other.value ? value - other.value : M - (other.value - value);
+            }
     };
 }
