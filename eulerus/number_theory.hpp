@@ -307,6 +307,7 @@ namespace eulerus::number_theory {
             // Construct a congruence class with a value between 0 and `M`
             Congruence(std::integral auto x) : value(mod(x, M)) {}
 
+            // Return the modular inverse of the congruence class, if it exists
             Congruence inverse() const {
                 assert(value != 0);
 
@@ -336,6 +337,11 @@ namespace eulerus::number_theory {
             // Multiply two congruence classes together
             Congruence operator*(const Congruence& other) const {
                 return value * other.value;
+            }
+
+            // Divide one congruence class by another, if the divisor has a modular inverse
+            Congruence operator/(const Congruence& other) const {
+                return value * other.inverse().value;
             }
     };
 }
