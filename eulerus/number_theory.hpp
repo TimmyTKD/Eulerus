@@ -321,5 +321,10 @@ namespace eulerus::number_theory {
             Congruence operator-(const Congruence& other) const {
                 return value >= other.value ? value - other.value : M - (other.value - value);
             }
+
+            // Multiply two congruence classes together
+            Congruence operator*(const Congruence& other) const {
+                return value * other.value;
+            }
     };
 }
