@@ -329,9 +329,20 @@ namespace eulerus::number_theory {
                 return value + other.value;
             }
 
+            // Add an integer to a congruence class
+            Congruence operator+(std::integral auto x) const {
+                return value + mod(x, M);
+            }
+
             // Subtract one congruence class from another
             Congruence operator-(const Congruence& other) const {
                 return value >= other.value ? value - other.value : M - (other.value - value);
+            }
+
+            // Subtract an integer from a congruence class
+            Congruence operator-(std::integral auto x) const {
+                std::size_t remainder = mod(x, M);
+                return value >= remainder ? value - remainder : M - (remainder - value);
             }
 
             // Multiply two congruence classes together
