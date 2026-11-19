@@ -350,9 +350,19 @@ namespace eulerus::number_theory {
                 return value * other.value;
             }
 
+            // Multiply a congruence class by an integer
+            Congruence operator*(std::integral auto x) const {
+                return value * mod(x, M);
+            }
+
             // Divide one congruence class by another, if the divisor has a modular inverse
             Congruence operator/(const Congruence& other) const {
                 return value * other.inverse().value;
+            }
+
+            // Divide a congruence class by an integer, if the divisor has a modular inverse
+            Congruence operator/(std::integral auto x) const {
+                return value * Congruence(x).inverse().value;
             }
     };
 }
