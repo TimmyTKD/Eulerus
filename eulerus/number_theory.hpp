@@ -334,6 +334,11 @@ namespace eulerus::number_theory {
                 return result;
             }
 
+            // Raise the congruence class to the power of another congruence class
+            Congruence pow(const Congruence& other) const {
+                return pow(other.value);
+            }
+
             // Convert the congruence class to a numeric value
             operator std::size_t() const {
                 return value;
