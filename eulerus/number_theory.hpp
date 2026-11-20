@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <concepts>
+#include <cstddef>
 #include <type_traits>
 #include <utility>
 
@@ -316,6 +317,21 @@ namespace eulerus::number_theory {
                 } else {
                     throw std::runtime_error("No modular inverse exists for " + std::to_string(value) + " modulo " + std::to_string(M));
                 }
+            }
+
+            // Raise the congruence class to the power of `exp`
+            Congruence pow(std::integral auto exp) const {
+                if (exp < 0) {
+                    return inverse().pow(-exp);
+                }
+
+                std::size_t result = 1;
+
+                for (std::size_t i = 0; i < exp; i++) {
+                    result = mod(result * value, M);
+                }
+
+                return result;
             }
 
             // Convert the congruence class to a numeric value
