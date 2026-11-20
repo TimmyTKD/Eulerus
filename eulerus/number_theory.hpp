@@ -309,10 +309,9 @@ namespace eulerus::number_theory {
 
             // Return the modular inverse of the congruence class, if it exists
             Congruence inverse() const {
-                assert(value != 0);
-
                 std::size_t x, y;
-                if (is_lde_solvable(value, M, 1, x, y)) {
+                
+                if (value != 0 && is_lde_solvable(value, M, 1, x, y)) {
                     return x;
                 } else {
                     throw std::runtime_error("No modular inverse exists for " + std::to_string(value) + " modulo " + std::to_string(M));
