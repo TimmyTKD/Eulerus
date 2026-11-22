@@ -400,6 +400,18 @@ namespace eulerus::number_theory {
                 return value * mod(x, M);
             }
 
+            // Multiply the congruence class in-place by another congruence class
+            Congruence& operator*=(const Congruence& other) {
+                value = mod(value * other.value, M);
+                return *this;
+            }
+
+            // Multiply the congruence class in-place by an integer
+            Congruence& operator*=(std::integral auto x) {
+                value = mod(value * mod(x, M), M);
+                return *this;
+            }
+
             // Divide one congruence class by another, if the divisor has a modular inverse
             Congruence operator/(const Congruence& other) const {
                 return value * other.inverse().value;
