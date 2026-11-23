@@ -421,5 +421,17 @@ namespace eulerus::number_theory {
             Congruence operator/(std::integral auto x) const {
                 return value * Congruence(x).inverse().value;
             }
+
+            // Divide the congruence class in-place by another congruence class, if the divisor has a modular inverse
+            Congruence& operator/=(const Congruence& other) {
+                value = mod(value * other.inverse().value, M);
+                return *this;
+            }
+
+            // Divide the congruence class in-place by an integer, if the divisor has a modular inverse
+            Congruence& operator/=(std::integral auto x) {
+                value = mod(value * Congruence(x).inverse().value, M);
+                return *this;
+            }
     };
 }
