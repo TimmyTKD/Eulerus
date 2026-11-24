@@ -344,6 +344,11 @@ namespace eulerus::number_theory {
                 return value;
             }
 
+            // Check if two congruence classes are equal
+            bool operator==(const Congruence& other) const {
+                return value == other.value;
+            }
+
             // Add two congruence classes together
             Congruence operator+(const Congruence& other) const {
                 return value + other.value;
