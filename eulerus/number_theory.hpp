@@ -308,6 +308,11 @@ namespace eulerus::number_theory {
             // Construct a congruence class with a value between 0 and `M`
             Congruence(std::integral auto x) : value(mod(x, M)) {}
 
+            // Check if the congruence class has a modular inverse
+            bool invertible() const {
+                return value != 0 && gcd(value, M) == 1;
+            }
+
             // Return the modular inverse of the congruence class, if it exists
             Congruence inverse() const {
                 std::size_t x, y;
