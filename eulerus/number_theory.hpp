@@ -330,6 +330,10 @@ namespace eulerus::number_theory {
                     return inverse().pow(-exp);
                 }
 
+                if (value == 0 || value == 1 || exp == 1) {
+                    return value;
+                }
+
                 std::size_t result = 1;
 
                 for (std::size_t i = 0; i < exp; i++) {
