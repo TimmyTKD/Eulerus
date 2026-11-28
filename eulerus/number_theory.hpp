@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <compare>
 #include <concepts>
 #include <cstddef>
 #include <type_traits>
@@ -358,6 +359,11 @@ namespace eulerus::number_theory {
             // Check if two congruence classes are equal
             bool operator==(const Congruence& other) const {
                 return value == other.value;
+            }
+
+            // Compare two congruence classes based on their numeric values
+            std::strong_ordering operator<=>(const Congruence& other) const {
+                return value <=> other.value;
             }
 
             // Add two congruence classes together
