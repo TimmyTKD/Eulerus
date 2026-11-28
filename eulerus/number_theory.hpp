@@ -134,6 +134,7 @@ namespace eulerus::number_theory {
         set_theory::TypedSet<decltype(x)> factors;
         decltype(x) lpf; 
 
+        // Find the prime factors by repeatedly dividing `x` by its lowest prime factor
         while (x > 1) {
             if (is_prime(x, lpf)) {
                 factors.insert(x);
@@ -317,6 +318,7 @@ namespace eulerus::number_theory {
             Congruence inverse() const {
                 std::size_t x, y;
                 
+                // Find a solution to the linear Diophantine equation `value * x + M * y = 1`, where `x` is the modular inverse of `value` modulo `M`
                 if (value != 0 && is_lde_solvable(value, M, 1, x, y)) {
                     return x;
                 } else {
@@ -335,6 +337,7 @@ namespace eulerus::number_theory {
 
                 std::size_t result = 1;
 
+                // Compute the power by repeated multiplication, reducing modulo `M` at each step to avoid overflow
                 for (std::size_t i = 0; i < exp; i++) {
                     result = mod(result * value, M);
                 }
